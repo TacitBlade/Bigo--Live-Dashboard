@@ -1,5 +1,5 @@
 [theme]
-base="Dark"
+base="dark"
 
 [server]
 headless = true
