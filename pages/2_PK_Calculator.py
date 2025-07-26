@@ -14,6 +14,9 @@ def load_rules():
         excel_file = pd.ExcelFile(excel_path)
         sheet_names = excel_file.sheet_names
         
+        # Debug: Show available sheets
+        st.info(f"Available sheets: {sheet_names}")
+        
         # Try common sheet names or use the first available sheet
         sheet_to_use = None
         common_names = ['Sheet1', 'Rules', 'PK Rules', 'Data']
@@ -33,6 +36,13 @@ def load_rules():
             return None
             
         rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use)
+        
+        # Debug: Show available columns
+        st.info(f"Available columns: {list(rules_df.columns)}")
+        
+        # Debug: Show first few rows
+        st.info("First few rows of data:")
+        st.dataframe(rules_df.head())
         
         # Process the diamond requirements by removing ')' from PK scores
         if 'PK Score' in rules_df.columns:
@@ -54,15 +64,35 @@ def load_rules():
 
 def calculate_pk_breakdown(diamonds: int, rules_df: pd.DataFrame) -> str:
     """Calculates the optimal PK breakdown based on diamond input."""
-    if 'Diamond Requirement' not in rules_df.columns or 'PK Type' not in rules_df.columns:
-        return "Could not calculate breakdown due to missing or invalid rules data."
+    
+    # Debug: Check what columns are available
+    available_columns = list(rules_df.columns)
+    st.info(f"Checking columns: {available_columns}")
+    
+    # Try to find the correct column names (case-insensitive)
+    diamond_col = None
+    pk_type_col = None
+    
+    for col in available_columns:
+        col_lower = col.lower()
+        if 'diamond' in col_lower and ('requirement' in col_lower or 'score' in col_lower):
+            diamond_col = col
+        elif 'pk' in col_lower and 'type' in col_lower:
+            pk_type_col = col
+        elif col_lower in ['type', 'pk_type', 'event', 'event_type']:
+            pk_type_col = col
+    
+    if diamond_col is None or pk_type_col is None:
+        return f"Could not find required columns. Available: {available_columns}. Looking for diamond requirements and PK types."
 
     # Create a copy to avoid modifying the original dataframe
     rules_copy = rules_df.copy()
     
-    # Clean and ensure 'Diamond Requirement' is numeric
-    rules_copy['Diamond Requirement'] = rules_copy['Diamond Requirement'].astype(str).str.rstrip(')')
+    # Clean and ensure diamond column is numeric
+    rules_copy['Diamond Requirement'] = rules_copy[diamond_col].astype(str).str.rstrip(')')
     rules_copy['Diamond Requirement'] = pd.to_numeric(rules_copy['Diamond Requirement'], errors='coerce')
+    rules_copy['PK Type'] = rules_copy[pk_type_col]
+    
     rules_copy = rules_copy.dropna(subset=['Diamond Requirement'])
     rules_copy = rules_copy.sort_values(by='Diamond Requirement', ascending=False)
 
