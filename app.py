@@ -1,78 +1,128 @@
 import streamlit as st
 import pandas as pd
 from utils.gsheets import read_filtered_columns
+from datetime import timedelta
+import time
 
-st.set_page_config(page_title="Bigo Matchup Viewer", layout="wide")
-
+# ---- Config ----
+st.set_page_config(page_title="Bigo PK Dashboard", layout="wide")
 st.title("📊 Bigo PK Match Data Viewer")
 
-# Load data from all 3 sheets
+# --- Auto Refresh ---
+refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=2)
+if refresh_interval > 0:
+    st.caption(f"⏱ Auto-refreshing every {refresh_interval} minute(s).")
+    time.sleep(refresh_interval * 60)
+    st.rerun()
+
+# --- Load sheets ---
 sheet_urls = {
     "Sheet 1": "https://docs.google.com/spreadsheets/d/1T2Za-VeqUe4hN-00X-Qa5T3FAgXMExz2B1Brhspbr7w/edit?gid=920344037",
     "Sheet 2": "https://docs.google.com/spreadsheets/d/1DD7I5sMu55wRVwGjPEv43iygq2b8oudfMspGlOY1zck/edit?gid=1990132269",
     "Sheet 3": "https://docs.google.com/spreadsheets/d/1iS9acwW9DrjZQh_d51_Pv4DcN9_X4alzK3wC2KIWXYw/edit?gid=1234468340",
 }
 
-all_dfs: list[pd.DataFrame] = []
-for name, url in sheet_urls.items():
-    try:
-        df: pd.DataFrame = read_filtered_columns(url)
+@st.cache_data(ttl=300)
+def load_all_data() -> pd.DataFrame:
+    all_dfs: list[pd.DataFrame] = []
+    for name, url in sheet_urls.items():
+        df = read_filtered_columns(url)
         if not df.empty:
             df["Source Sheet"] = name
             all_dfs.append(df)
-        else:
-            st.warning(f"No data found in {name}")
-    except Exception as e:
-        st.error(f"Error loading {name}: {str(e)}")
+    
+    if not all_dfs:
+        return pd.DataFrame()
+    
+    return pd.concat(all_dfs, ignore_index=True)
 
-if not all_dfs:
-    st.error("No data could be loaded from any sheets.")
+combined_df = load_all_data()
+
+# Handle empty dataframe case
+if combined_df.empty:
+    st.warning("⚠️ No data found in any of the sheets. Please check the sheet URLs and data.")
     st.stop()
 
-combined_df: pd.DataFrame = pd.concat(all_dfs, ignore_index=True)
+# Ensure date is in datetime format
+if "Date" in combined_df.columns:
+    try:
+        combined_df["Date"] = pd.to_datetime(combined_df["Date"], errors='coerce')
+    except Exception as e:
+        st.error(f"Error parsing dates: {e}")
+        combined_df["Date"] = pd.NaT
 
-# Sidebar filters
+# --- Sidebar filters ---
 st.sidebar.header("🔍 Filter Data")
 
+# Quick date filters
+today = pd.Timestamp.now().normalize()
+this_week = today - timedelta(days=today.weekday())
 
-date_options = sorted(combined_df["Date"].dropna().unique())
-agency1_options = sorted(combined_df["Agency Name.1"].dropna().unique())
-agency2_options = sorted(combined_df["Agency Name.2"].dropna().unique())
+quick_filter = st.sidebar.radio("📅 Quick Filter", ["All", "Today", "This Week"])
 
-selected_date: list[str] = st.sidebar.multiselect(
-    "Select Date",
-    date_options,
-    default=date_options if len(date_options) > 0 else None
-)
-selected_agency1: list[str] = st.sidebar.multiselect(
-    "Agency Name 1",
-    agency1_options,
-    default=agency1_options if len(agency1_options) > 0 else None
-)
-selected_agency2: list[str] = st.sidebar.multiselect(
-    "Agency Name 2",
-    agency2_options,
-    default=agency2_options if len(agency2_options) > 0 else None
-)
+if quick_filter == "Today":
+    combined_df = combined_df[combined_df["Date"] == today]
+elif quick_filter == "This Week":
+    combined_df = combined_df[(combined_df["Date"] >= this_week) & (combined_df["Date"] <= today + timedelta(days=1))]
+
+# Regular filters
+if "Date" in combined_df.columns and not combined_df["Date"].isna().all():
+    date_options = sorted(combined_df["Date"].dropna().dt.strftime("%Y-%m-%d").unique())
+else:
+    date_options = []
+
+if "Agency Name.1" in combined_df.columns:
+    agency1_options = sorted(combined_df["Agency Name.1"].dropna().unique())
+else:
+    agency1_options = []
+
+if "Agency Name.2" in combined_df.columns:
+    agency2_options = sorted(combined_df["Agency Name.2"].dropna().unique())
+else:
+    agency2_options = []
+
+selected_date = st.sidebar.multiselect("Select Date", date_options, default=date_options)
+selected_agency1 = st.sidebar.multiselect("Agency Name 1", agency1_options, default=agency1_options)
+selected_agency2 = st.sidebar.multiselect("Agency Name 2", agency2_options, default=agency2_options)
+
+# Search box
+search_text = st.text_input("🔎 Search any keyword (ID, Agency, Date, etc.)")
 
 # Apply filters
-filtered_df: pd.DataFrame
-if selected_date and selected_agency1 and selected_agency2:
+if date_options and agency1_options and agency2_options:
     filtered_df = combined_df[
-        combined_df["Date"].isin(selected_date) &
+        combined_df["Date"].dt.strftime("%Y-%m-%d").isin(selected_date) &
         combined_df["Agency Name.1"].isin(selected_agency1) &
         combined_df["Agency Name.2"].isin(selected_agency2)
     ]
 else:
-    # If any filter is empty, show no results to prevent errors
-    filtered_df = pd.DataFrame(columns=combined_df.columns)
+    filtered_df = combined_df.copy()
 
-st.success(f"{len(filtered_df)} rows matched your filters.")
+# Apply search
+if search_text:
+    search_text = search_text.lower()
+    filtered_df = filtered_df[
+        filtered_df.apply(lambda row: row.astype(str).str.lower().str.contains(search_text, na=False).any(), axis=1)
+    ]
 
-# Display table
-st.dataframe(filtered_df, use_container_width=True)
+st.success(f"✅ {len(filtered_df)} rows matched your filters.")
 
-# Excel download
+# --- Styled Table with Conditional Highlight ---
+def render_html_table(df: pd.DataFrame) -> str:
+    html = "<style>td, th {padding: 6px 12px;} table {border-collapse: collapse; width: 100%; font-size: 15px;} th {background: #eee;}</style>"
+    html += "<table border='1'>"
+    html += "<thead><tr>" + "".join([f"<th>{col}</th>" for col in df.columns]) + "</tr></thead><tbody>"
+
+    for idx, (_, row) in enumerate(df.iterrows()):
+        bg_color = "#ffe5e5" if row.get("Agency Name.1") == row.get("Agency Name.2") else ("#f9f9f9" if idx % 2 == 0 else "#ffffff")
+        html += f"<tr style='background-color:{bg_color}'>" + "".join(
+            [f"<td>{str(cell)}</td>" for cell in row]) + "</tr>"
+    html += "</tbody></table>"
+    return html
+
+st.markdown(render_html_table(filtered_df), unsafe_allow_html=True)
+
+# --- Download to Excel ---
 @st.cache_data
 def convert_to_excel(df: pd.DataFrame) -> bytes:
     import io
@@ -82,12 +132,10 @@ def convert_to_excel(df: pd.DataFrame) -> bytes:
     return output.getvalue()
 
 excel_data = convert_to_excel(filtered_df)
-if len(filtered_df) > 0:
-    st.download_button(
-        label="📥 Download Filtered Data (Excel)",
-        data=excel_data,
-        file_name="bigo_pk_data.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-else:
-    st.info("No data to download. Please adjust your filters.")
+st.download_button(
+    label="📥 Download Filtered Data (Excel)",
+    data=excel_data,
+    file_name="bigo_pk_data.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+# --- Footer ---
