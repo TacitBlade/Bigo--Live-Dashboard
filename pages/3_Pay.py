@@ -42,6 +42,7 @@ with tab1:
                 host_df = pd.read_excel(uploaded)
 
             host_df.columns = host_df.columns.str.strip()
+            host_df.columns = host_df.columns.str.replace(r'[^\x00-\x7F]+', '', regex=True)
 
             # Define mappings for the expected columns in the uploaded file
             column_mapping = {
