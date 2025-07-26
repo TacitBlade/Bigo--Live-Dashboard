@@ -1,0 +1,76 @@
+{
+  "training_videos": [
+    {
+      "id": "1",
+      "title": "Getting Started with Bigo Live",
+      "description": "Introduction to the platform and basic features",
+      "category": "basics",
+      "duration": "10:30",
+      "url": "https://example.com/video1",
+      "thumbnail": "https://example.com/thumb1.jpg"
+    },
+    {
+      "id": "2",
+      "title": "PK Battle Strategies",
+      "description": "Advanced techniques for winning PK battles",
+      "category": "pk_strategies",
+      "duration": "15:45",
+      "url": "https://example.com/video2",
+      "thumbnail": "https://example.com/thumb2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Host Engagement Best Practices",
+      "description": "How to keep your audience engaged and grow your following",
+      "category": "engagement",
+      "duration": "12:20",
+      "url": "https://example.com/video3",
+      "thumbnail": "https://example.com/thumb3.jpg"
+    },
+    {
+      "id": "4",
+      "title": "Agency Rules and Guidelines",
+      "description": "Important rules and guidelines for agency hosts",
+      "category": "rules",
+      "duration": "8:15",
+      "url": "https://example.com/video4",
+      "thumbnail": "https://example.com/thumb4.jpg"
+    },
+    {
+      "id": "5",
+      "title": "Payment and Rewards System",
+      "description": "Understanding how payments and bonuses work",
+      "category": "payments",
+      "duration": "11:30",
+      "url": "https://example.com/video5",
+      "thumbnail": "https://example.com/thumb5.jpg"
+    }
+  ],
+  "categories": [
+    {
+      "id": "basics",
+      "name": "Basics",
+      "description": "Getting started with Bigo Live"
+    },
+    {
+      "id": "pk_strategies",
+      "name": "PK Strategies",
+      "description": "Advanced PK battle techniques"
+    },
+    {
+      "id": "engagement",
+      "name": "Engagement",
+      "description": "Audience engagement and growth"
+    },
+    {
+      "id": "rules",
+      "name": "Rules & Guidelines",
+      "description": "Agency policies and rules"
+    },
+    {
+      "id": "payments",
+      "name": "Payments",
+      "description": "Payment system and rewards"
+    }
+  ]
+}

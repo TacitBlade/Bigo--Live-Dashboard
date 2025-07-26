@@ -20,14 +20,18 @@ A Streamlit-based analytics and management dashboard for Bigo Live agencies. Thi
 
 ## 🗂 Project Structure
 
+```
 bigo-live-dashboard/
-├── app.py # Main Streamlit application
-├── requirements.txt # Python dependencies
+├── app.py                  # Main Streamlit application
+├── requirements.txt        # Python dependencies
 ├── google_credentials.json # Google Service Account credentials (ignored by Git)
-├── config/ # App and AWS configuration
-├── utils/ # Auth, calculators, paysheet, GSheets logic
-├── templates/ # Training videos, PDFs
-├── static/ # CSS styles
+├── config/                 # App and AWS configuration
+├── utils/                  # Auth, calculators, paysheet, GSheets logic
+├── templates/              # Training videos, PDFs
+├── static/                 # CSS styles
+├── scripts/                # AWS deployment script
+└── README.md              # Project documentation
+```
 ├── scripts/ # AWS deployment script
 └── README.md # Project documentation
 
