@@ -12,11 +12,17 @@ st.markdown("Select a page from the sidebar to begin 👉")
 st.info("Use the sidebar navigation to switch between **PK Viewer**, **Schedule**, and **Pay**.")
 
 # --- Auto Refresh ---
-refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=2)
+refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=0)
 if refresh_interval > 0:
     st.caption(f"⏱ Auto-refreshing every {refresh_interval} minute(s).")
-    time.sleep(refresh_interval * 60)
-    st.rerun()
+    # Use session state to track last refresh time
+    if 'last_refresh' not in st.session_state:
+        st.session_state.last_refresh = time.time()
+    
+    current_time = time.time()
+    if current_time - st.session_state.last_refresh > refresh_interval * 60:
+        st.session_state.last_refresh = current_time
+        st.rerun()
 
 # --- Load sheets ---
 sheet_urls = {

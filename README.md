@@ -1,13 +1,133 @@
 # 📊 Bigo Live Dashboard
 
-A Streamlit-based analytics and management dashboard for Bigo Live agencies. This tool integrates with Google Sheets and AWS, enabling real-time data visualization, performance tracking, and automated paysheet generation for hosts and managers.
-
----
+A comprehensive dashboard for managing Bigo Live PK matches, schedules, and host payments.
 
 ## 🚀 Features
 
-- 🔐 **Host & Admin Authentication**
-- 📈 **Performance Calculators**
+### 📈 PK Viewer (`pages/1-PK_viewer.py`)
+- **Multi-sheet data integration** from Google Sheets
+- **Real-time filtering** by date, agency, and search terms
+- **Quick date filters** (Today, This Week, All)
+- **Visual highlighting** for same-agency matches
+- **Excel export** functionality
+- **Responsive data loading** with error handling
+
+### 📅 Schedule Management (`pages/2_Schedule.py`)
+- **Weekly PK schedule** overview
+- **Host and day filtering** options
+- **Color-coded event types** (Talent, Family, Agency, Group)
+- **Performance statistics** and metrics
+- **Schedule export** to CSV
+- **Dynamic schedule data** with realistic events
+
+### 💰 Payment Calculator (`pages/3_Pay.py`)
+- **Automated payment calculations** based on:
+  - PK wins and performance
+  - Streaming hours
+  - Beans earned
+  - Agency tier multipliers
+  - Win rate bonuses
+- **Interactive payment settings** via sidebar
+- **Visual payment breakdown** and analysis
+- **Top performer highlighting**
+- **Export functionality** for reports
+
+## 🛠️ Recent Fixes & Improvements
+
+### ✅ Critical Issues Resolved
+1. **Undefined Variable Fix**: Fixed `filtered_df` error in PK viewer page
+2. **Auto-refresh Logic**: Improved refresh mechanism to prevent infinite loops
+3. **Error Handling**: Enhanced Google Sheets connectivity with better error messages
+4. **Type Safety**: Added type hints and improved pandas operations
+5. **Configuration**: Fixed CORS and security settings in Streamlit config
+
+### 🔧 Infrastructure Improvements
+- **Python Environment**: Configured virtual environment properly
+- **Dependencies**: Updated and installed all required packages
+- **Code Structure**: Improved modularity and error handling
+- **UI/UX**: Enhanced visual styling and user feedback
+
+## 📋 Installation & Setup
+
+### Prerequisites
+- Python 3.8+
+- Virtual environment (recommended)
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/TacitBlade/Bigo--Live-Dashboard.git
+cd Bigo--Live-Dashboard
+```
+
+### 2. Set Up Virtual Environment
+```bash
+python -m venv .venv
+# Windows
+.venv\\Scripts\\activate
+# Linux/Mac
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+```bash
+streamlit run app.py
+```
+
+The application will be available at `http://localhost:8501`
+
+## 📊 Google Sheets Integration
+
+### Sheet URLs Configuration
+Update the `sheet_urls` dictionary in both `app.py` and `pages/1-PK_viewer.py`:
+
+```python
+sheet_urls = {
+    "Sheet 1": "your_google_sheet_url_1",
+    "Sheet 2": "your_google_sheet_url_2", 
+    "Sheet 3": "your_google_sheet_url_3",
+}
+```
+
+### Required Column Names
+Ensure your Google Sheets contain these columns:
+- `Date`
+- `Time`
+- `Agency Name.1`
+- `ID1`
+- `Agency Name.2`
+- `ID.2`
+
+### Sheet Permissions
+- Make sure sheets are publicly accessible or configure authentication
+- Use the "Anyone with the link can view" sharing setting
+
+## 🎨 Configuration Options
+
+### Streamlit Configuration (`.streamlit/config.toml`)
+```toml
+[theme]
+base="light"
+
+[server]
+headless = true
+enableCORS = true
+enableXsrfProtection = true
+
+[client]
+showSidebarNavigation = true
+```
+
+### Payment Calculator Settings
+Adjust payment parameters in the sidebar:
+- Agency tier multipliers (Platinum, Gold, Silver)
+- Base win bonus and hourly rates
+- Beans conversion rates
+- Win rate bonus thresholds
   - Beans ➜ Diamonds
   - PK Stats & Targets
 - 📝 **Automated Paysheet Generator**
