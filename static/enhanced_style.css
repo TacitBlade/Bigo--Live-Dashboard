@@ -1,0 +1,206 @@
+/* Enhanced Bigo Live Dashboard Styles */
+
+/* Main container styling */
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Header styling */
+h1 {
+    color: #1f1f1f;
+    font-weight: 700;
+    border-bottom: 3px solid #ff6b6b;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Sidebar improvements */
+.css-1d391kg {
+    background-color: #f8f9fa;
+}
+
+.css-1d391kg .css-1v0mbdj {
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+/* Button styling */
+.stButton > button {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.stButton > button:hover {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4);
+}
+
+/* Metric containers */
+.css-1r6slb0 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Success/Info/Warning messages */
+.stSuccess {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.stInfo {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.stWarning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Enhanced table styling */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    padding: 12px 15px;
+    text-align: left;
+    border: none;
+}
+
+td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+tr:hover td {
+    background-color: #f8f9fa;
+}
+
+/* Agency match highlighting */
+tr[style*="#ffe5e5"] {
+    background: linear-gradient(90deg, #ffe5e5 0%, #ffebee 100%) !important;
+    border-left: 4px solid #ff6b6b;
+}
+
+/* Filter section styling */
+.css-1inwz65 {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Download button styling */
+.stDownloadButton > button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.stDownloadButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Selectbox styling */
+.stSelectbox > div > div {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Text input styling */
+.stTextInput > div > div > input {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+}
+
+/* Expander styling */
+.streamlit-expanderHeader {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Loading spinner customization */
+.stSpinner {
+    color: #ff6b6b;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.css-1d391kg, .main .block-container {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .main .block-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 8px 10px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .css-1d391kg {
+        background-color: #2d3748;
+    }
+    
+    .css-1d391kg .css-1v0mbdj {
+        background: #4a5568;
+        color: white;
+    }
+}

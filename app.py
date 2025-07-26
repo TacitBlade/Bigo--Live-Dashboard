@@ -1,16 +1,21 @@
 import streamlit as st
 import pandas as pd
 from utils.gsheets import read_filtered_columns
+from utils.gsheets_writer import write_dataframe_to_sheet
+from utils.data_validator import safe_date_conversion, clean_text_data, display_data_info
 from datetime import timedelta
 import time
 
 # Load custom CSS
 def load_css():
-    try:
-        with open('static/style.css') as f:
-            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-    except FileNotFoundError:
-        pass  # CSS file is optional
+    css_files = ['static/enhanced_style.css', 'static/style.css']
+    for css_file in css_files:
+        try:
+            with open(css_file) as f:
+                st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+                break  # Use the first available CSS file
+        except FileNotFoundError:
+            continue
 
 # ---- Config ----
 st.set_page_config(page_title="Bigo PK Dashboard", layout="wide")
@@ -21,8 +26,18 @@ st.title("📊 Bigo PK Match Data Viewer")
 st.markdown("Select a page from the sidebar to begin 👉")
 st.info("Use the sidebar navigation to switch between **PK Viewer**, **Schedule**, and **Pay**.")
 
-# --- Auto Refresh ---
-refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=0)
+# --- Auto Refresh and Cache Management ---
+col1, col2 = st.sidebar.columns(2)
+
+with col1:
+    refresh_interval = st.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=0)
+
+with col2:
+    if st.button("🗑️ Clear Cache"):
+        st.cache_data.clear()
+        st.success("Cache cleared!")
+        st.rerun()
+
 if refresh_interval > 0:
     st.caption(f"⏱ Auto-refreshing every {refresh_interval} minute(s).")
     # Use session state to track last refresh time
@@ -49,37 +64,34 @@ sheet_map = {
 selected_sheet_name = st.sidebar.selectbox("📋 Select PK Sheet", options=sheet_map.keys())
 selected_sheet_url = sheet_map[selected_sheet_name]
 
-if st.button("✍️ Save back to Google Sheet"):
-    write_dataframe_to_sheet(
-        sheet_url=sheet_map[selected_sheet_name],
-        worksheet_name="StreamlitExport",
-        df=filtered_df
-    )
-    st.success("Sheet updated successfully ✅")
-
-
-df = read_filtered_columns(selected_sheet_url)
-
 @st.cache_data(ttl=300)
 def load_all_data() -> pd.DataFrame:
     all_dfs = []
     for name, url in sheet_urls.items():
-        df = read_filtered_columns(url)
-        df["Source Sheet"] = name
-        all_dfs.append(df)
+        try:
+            df = read_filtered_columns(url)
+            if not df.empty:
+                df["Source Sheet"] = name
+                all_dfs.append(df)
+        except Exception as e:
+            st.warning(f"⚠️ Could not load {name}: {str(e)}")
+    
     if all_dfs:
         return pd.concat(all_dfs, ignore_index=True)
     else:
         return pd.DataFrame()
 
+# Load the combined data
 combined_df = load_all_data()
 
-# Ensure date is in datetime format
-if not combined_df.empty and "Date" in combined_df.columns:
-    try:
-        combined_df["Date"] = pd.to_datetime(combined_df["Date"], errors='coerce')
-    except Exception as e:
-        st.warning(f"⚠️ Date conversion error: {str(e)}")
+# Clean and validate the data
+if not combined_df.empty:
+    combined_df = clean_text_data(combined_df)
+    combined_df = safe_date_conversion(combined_df)
+
+# Display data info
+if not combined_df.empty:
+    display_data_info(combined_df, "Combined Data Summary")
 
 # --- Sidebar filters ---
 st.sidebar.header("🔍 Filter Data")
@@ -87,7 +99,7 @@ st.sidebar.header("🔍 Filter Data")
 # Quick date filters
 if not combined_df.empty and "Date" in combined_df.columns:
     today = pd.Timestamp.now().normalize()
-    this_week = today - pd.to_timedelta(today.weekday(), unit='D')
+    this_week = today - timedelta(days=today.weekday())
 
     quick_filter = st.sidebar.radio("📅 Quick Filter", ["All", "Today", "This Week"])
 
@@ -149,6 +161,21 @@ if search_text and not filtered_df.empty:
     mask = filtered_df.astype(str).apply(lambda x: x.str.lower().str.contains(search_text, na=False)).any(axis=1)
     filtered_df = filtered_df[mask]
 
+# Save to Google Sheet button (now filtered_df is defined)
+if st.button("✍️ Save back to Google Sheet"):
+    if not filtered_df.empty:
+        try:
+            write_dataframe_to_sheet(
+                sheet_url=sheet_map[selected_sheet_name],
+                worksheet_name="StreamlitExport",
+                df=filtered_df
+            )
+            st.success("Sheet updated successfully ✅")
+        except Exception as e:
+            st.error(f"Error saving to sheet: {str(e)}")
+    else:
+        st.warning("No data to save!")
+
 st.success(f"✅ {len(filtered_df)} rows matched your filters.")
 
 # Display data if available
@@ -159,7 +186,7 @@ if not filtered_df.empty:
         html += "<table border='1'>"
         html += "<thead><tr>" + "".join([f"<th>{col}</th>" for col in df.columns]) + "</tr></thead><tbody>"
 
-        for idx, (i, row) in enumerate(df.iterrows()):
+        for idx, (_, row) in enumerate(df.iterrows()):
             # Highlight if agencies are the same
             bg_color = "#ffe5e5" if row.get("Agency Name.1") == row.get("Agency Name.2") else ("#f9f9f9" if idx % 2 == 0 else "#ffffff")
             html += f"<tr style='background-color:{bg_color}'>" + "".join(
@@ -176,14 +203,20 @@ else:
 def convert_to_excel(df: pd.DataFrame) -> bytes:
     import io
     output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name="PK Data")
-    return output.getvalue()
+    try:
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name="PK Data")
+        return output.getvalue()
+    except Exception as e:
+        st.error(f"Error creating Excel file: {str(e)}")
+        return b""
 
-excel_data = convert_to_excel(filtered_df)
-st.download_button(
-    label="📥 Download Filtered Data (Excel)",
-    data=excel_data,
-    file_name="bigo_pk_data.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-)
+if not filtered_df.empty:
+    excel_data = convert_to_excel(filtered_df)
+    if excel_data:
+        st.download_button(
+            label="📥 Download Filtered Data (Excel)",
+            data=excel_data,
+            file_name="bigo_pk_data.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
