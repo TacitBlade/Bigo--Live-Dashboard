@@ -68,7 +68,7 @@ def style_schedule(val):
         return 'background-color: white'
 
 # Apply styling and display
-styled_df = filtered_schedule.style.applymap(style_schedule)
+styled_df = filtered_schedule.style.map(style_schedule)
 st.dataframe(styled_df, use_container_width=True, height=400)
 
 # Legend
@@ -89,17 +89,22 @@ st.markdown("### 📊 Weekly Statistics")
 stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
 with stat_col1:
-    total_events = sum(df_schedule.iloc[:, 1:].apply(lambda x: sum(x != "Rest") + sum(x != "Prep Day") + sum(x != "Prep") for x in x).sum())
+    # Count total non-rest events
+    total_events = 0
+    for col in df_schedule.columns[1:]:  # Skip 'Host' column
+        total_events += sum(1 for val in df_schedule[col] if val not in ["Rest", "Prep Day", "Prep", "Solo Stream"])
     st.metric("Total Events", total_events)
 
 with stat_col2:
-    active_hosts = len([host for idx, row in df_schedule.iterrows() 
-                       if any(val not in ["Rest", "Prep Day", "Prep"] for val in row.iloc[1:])])
+    active_hosts = len([idx for idx, row in df_schedule.iterrows() 
+                       if any(val not in ["Rest", "Prep Day", "Prep", "Solo Stream"] for val in row.iloc[1:])])
     st.metric("Active Hosts", active_hosts)
 
 with stat_col3:
     # Count rest days
-    rest_count = sum(df_schedule.iloc[:, 1:].apply(lambda x: sum(x == "Rest")).sum())
+    rest_count = 0
+    for col in df_schedule.columns[1:]:  # Skip 'Host' column
+        rest_count += sum(1 for val in df_schedule[col] if val in ["Rest", "Prep Day", "Prep"])
     st.metric("Total Rest Slots", rest_count)
 
 with stat_col4:
