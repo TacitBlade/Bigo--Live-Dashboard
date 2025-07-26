@@ -14,9 +14,6 @@ def load_rules():
         excel_file = pd.ExcelFile(excel_path)
         sheet_names = excel_file.sheet_names
         
-        # Debug: Show available sheets
-        st.info(f"Available sheets: {sheet_names}")
-        
         # Try common sheet names or use the first available sheet
         sheet_to_use = None
         common_names = ['Sheet1', 'Rules', 'PK Rules', 'Data']
@@ -44,15 +41,10 @@ def load_rules():
         st.info("First few rows of data:")
         st.dataframe(rules_df.head())
         
-        # Process the diamond requirements by removing ')' from PK scores
+        # Process the diamond requirements from PK Score (divide by 10)
         if 'PK Score' in rules_df.columns:
-            # Extract diamond requirement by removing ')' from the end of PK Score
-            rules_df['Diamond Requirement'] = rules_df['PK Score'].astype(str).str.rstrip(')')
-            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
-        elif 'Diamond Requirement' in rules_df.columns:
-            # If Diamond Requirement already exists, clean it by removing ')'
-            rules_df['Diamond Requirement'] = rules_df['Diamond Requirement'].astype(str).str.rstrip(')')
-            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
+            # Convert PK Score to diamond requirement by dividing by 10 (removing a zero)
+            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['PK Score'], errors='coerce') / 10
         
         return rules_df
     except FileNotFoundError:
@@ -65,35 +57,14 @@ def load_rules():
 def calculate_pk_breakdown(diamonds: int, rules_df: pd.DataFrame) -> str:
     """Calculates the optimal PK breakdown based on diamond input."""
     
-    # Debug: Check what columns are available
-    available_columns = list(rules_df.columns)
-    st.info(f"Checking columns: {available_columns}")
-    
-    # Try to find the correct column names (case-insensitive)
-    diamond_col = None
-    pk_type_col = None
-    
-    for col in available_columns:
-        col_lower = col.lower()
-        if 'diamond' in col_lower and ('requirement' in col_lower or 'score' in col_lower):
-            diamond_col = col
-        elif 'pk' in col_lower and 'type' in col_lower:
-            pk_type_col = col
-        elif col_lower in ['type', 'pk_type', 'event', 'event_type']:
-            pk_type_col = col
-    
-    if diamond_col is None or pk_type_col is None:
-        return f"Could not find required columns. Available: {available_columns}. Looking for diamond requirements and PK types."
+    # Check for required columns
+    if 'PK Type' not in rules_df.columns or 'Diamond Requirement' not in rules_df.columns:
+        available_columns = list(rules_df.columns)
+        return f"Missing required columns. Available columns: {available_columns}. Need 'PK Type' and 'Diamond Requirement' (calculated from PK Score)."
 
-    # Create a copy to avoid modifying the original dataframe
+    # Create a copy and clean the data
     rules_copy = rules_df.copy()
-    
-    # Clean and ensure diamond column is numeric
-    rules_copy['Diamond Requirement'] = rules_copy[diamond_col].astype(str).str.rstrip(')')
-    rules_copy['Diamond Requirement'] = pd.to_numeric(rules_copy['Diamond Requirement'], errors='coerce')
-    rules_copy['PK Type'] = rules_copy[pk_type_col]
-    
-    rules_copy = rules_copy.dropna(subset=['Diamond Requirement'])
+    rules_copy = rules_copy.dropna(subset=['Diamond Requirement', 'PK Type'])
     rules_copy = rules_copy.sort_values(by='Diamond Requirement', ascending=False)
 
     remaining_diamonds = diamonds
@@ -102,10 +73,12 @@ def calculate_pk_breakdown(diamonds: int, rules_df: pd.DataFrame) -> str:
     for _, row in rules_copy.iterrows():
         diamond_req = int(row['Diamond Requirement'])
         pk_type = row['PK Type']
+        pk_score = int(row['PK Score']) if 'PK Score' in row else diamond_req * 10
+        win_amount = row['Win'] if 'Win' in row else "N/A"
         
         if remaining_diamonds >= diamond_req:
             num_pks = int(remaining_diamonds // diamond_req)
-            breakdown.append(f"- **{pk_type}**: {num_pks} time(s) ({num_pks * diamond_req:,} diamonds)")
+            breakdown.append(f"- **{pk_type}** (PK Score: {pk_score:,}): {num_pks} time(s) ({num_pks * diamond_req:,} diamonds) - Win: {win_amount}")
             remaining_diamonds %= diamond_req
 
     if not breakdown:
