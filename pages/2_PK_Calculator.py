@@ -90,7 +90,9 @@ def load_rules():
                     
                     # Extract numeric value from PK score (remove ')' or other characters)
                     try:
-                        pk_score = int(pk_score_raw.rstrip(')').replace(',', ''))
+                        # Handle different formats: "1000)", "1,000", "1000"
+                        clean_score = pk_score_raw.rstrip(')').replace(',', '').replace('(', '')
+                        pk_score = int(float(clean_score))
                         diamond_req = pk_score // 10  # Convert PK score to diamond requirement
                         
                         if diamond_req > 0:
@@ -100,18 +102,21 @@ def load_rules():
                                 'Diamond Requirement': diamond_req,
                                 'Win': win_amount
                             })
-                    except (ValueError, AttributeError):
+                    except (ValueError, AttributeError, TypeError) as e:
+                        st.write(f"**Debug - Skipping invalid data:** {pk_type} = '{pk_score_raw}' (Error: {e})")
                         continue
         
         if not pk_data:
             st.error("No valid PK data could be extracted from the Excel file.")
             st.write("**Available columns:**", list(rules_df.columns))
+            st.write("**Sample data for debugging:**")
+            st.dataframe(rules_df.head())
             return None
         
         # Convert to DataFrame
         processed_df = pd.DataFrame(pk_data)
         
-        # Remove duplicates and sort
+        # Remove duplicates and sort by diamond requirement (highest first)
         processed_df = processed_df.drop_duplicates().sort_values('Diamond Requirement', ascending=False)
         
         st.success(f"Successfully processed {len(processed_df)} PK types!")
