@@ -21,8 +21,10 @@ with tab1:
     )
 
     uploaded = st.file_uploader(
-        "📂 Upload host data (CSV/Excel) with columns: Host, Local Beans, Overseas Beans",
-        type=["csv", "xlsx"], key="host_pay_upload"
+        "📂 Upload host data (CSV/Excel)",
+        type=["csv", "xlsx"], 
+        key="host_pay_upload",
+        label_visibility="collapsed"
     )
 
     def calculate_pay(df):
@@ -33,51 +35,73 @@ with tab1:
         return df
 
     if uploaded:
-        if uploaded.name.endswith('.csv'):
-            host_df = pd.read_csv(uploaded)
-        else:
-            host_df = pd.read_excel(uploaded)
-
-        required_columns = ['Local Beans', 'Overseas Beans']
-        if not all(col in host_df.columns for col in required_columns):
-            st.error(
-                "The uploaded file is missing required columns. "
-                f"Please ensure it has: {', '.join(required_columns)}"
-            )
-        else:
-            host_df = calculate_pay(host_df)
-            total = len(host_df)
-            s6_count = host_df['S6 Qualify'].sum()
-
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Total Hosts", total, "👥")
-            c2.metric("Hosts ≥ S6", int(s6_count), "🌟")
-            bonus_amt = 0
-            if total > 10 and s6_count / total >= 0.10:
-                bonus_amt = 200 * int(s6_count)
-                c3.metric("S6 Bonus", f"${bonus_amt}", "💰")
+        try:
+            if uploaded.name.endswith('.csv'):
+                host_df = pd.read_csv(uploaded)
             else:
-                c3.metric("S6 Bonus", "Not Qualified", "❌")
+                host_df = pd.read_excel(uploaded)
 
-            # Highlight rows
-            def hl_s6(row):
-                return ['background-color: lightgreen' if row['S6 Qualify'] else '' for _ in row]
-            st.dataframe(host_df.style.apply(hl_s6, axis=1), use_container_width=True)
+            host_df.columns = host_df.columns.str.strip()
 
-            @st.cache_data
-            def to_excel(df):
-                buf = BytesIO()
-                with pd.ExcelWriter(buf, engine='openpyxl') as writer:
-                    df.to_excel(writer, index=False, sheet_name='Pay_Calc')
-                return buf.getvalue()
+            # Define mappings for the expected columns in the uploaded file
+            column_mapping = {
+                'Host ID': 'Host',
+                'Local beans': 'Local Beans',
+                'out of region beans': 'Overseas Beans'
+            }
+            
+            # Check for the columns from the uploaded file
+            required_source_columns = list(column_mapping.keys())
+            missing_cols = [col for col in required_source_columns if col not in host_df.columns]
 
-            excel_data = to_excel(host_df)
-            st.download_button(
-                "📥 Download Host Pay Results (Excel)",
-                data=excel_data,
-                file_name=f"host_pay_{datetime.now():%Y%m%d}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+            if missing_cols:
+                st.error(
+                    "The uploaded file is missing expected columns from the monthly report. "
+                    f"Please ensure it has: {', '.join(missing_cols)}"
+                )
+            else:
+                # Rename columns to what the script expects
+                host_df.rename(columns=column_mapping, inplace=True)
+                
+                host_df = calculate_pay(host_df)
+                
+                # Sort by Salary Beans to show top earners
+                host_df = host_df.sort_values(by='Salary Beans', ascending=False)
+
+                total = len(host_df)
+                s6_count = host_df['S6 Qualify'].sum()
+
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Total Hosts", total, "👥")
+                c2.metric("Hosts ≥ S6", int(s6_count), "🌟")
+                bonus_amt = 0
+                if total > 10 and s6_count / total >= 0.10:
+                    bonus_amt = 200 * int(s6_count)
+                    c3.metric("S6 Bonus", f"${bonus_amt}", "💰")
+                else:
+                    c3.metric("S6 Bonus", "Not Qualified", "❌")
+
+                # Highlight rows
+                def hl_s6(row):
+                    return ['background-color: lightgreen' if row['S6 Qualify'] else '' for _ in row]
+                st.dataframe(host_df.style.apply(hl_s6, axis=1), use_container_width=True)
+
+                @st.cache_data
+                def to_excel(df):
+                    buf = BytesIO()
+                    with pd.ExcelWriter(buf, engine='openpyxl') as writer:
+                        df.to_excel(writer, index=False, sheet_name='Pay_Calc')
+                    return buf.getvalue()
+
+                excel_data = to_excel(host_df)
+                st.download_button(
+                    "📥 Download Host Pay Results (Excel)",
+                    data=excel_data,
+                    file_name=f"host_pay_{datetime.now():%Y%m%d}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.error(f"An error occurred while processing the file: {e}")
     else:
         st.warning("Please upload a host data file to calculate pays.")
 
