@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from utils.gsheet_reader import read_filtered_columns
-from datetime import datetime, timedelta
+from utils.gsheets import read_filtered_columns
+from datetime import timedelta
 import time
 
 # ---- Config ----
@@ -13,7 +13,7 @@ refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 
 if refresh_interval > 0:
     st.caption(f"⏱ Auto-refreshing every {refresh_interval} minute(s).")
     time.sleep(refresh_interval * 60)
-    st.experimental_rerun()
+    st.rerun()
 
 # --- Load sheets ---
 sheet_urls = {
@@ -23,13 +23,16 @@ sheet_urls = {
 }
 
 @st.cache_data(ttl=300)
-def load_all_data():
+def load_all_data() -> pd.DataFrame:
     all_dfs = []
     for name, url in sheet_urls.items():
         df = read_filtered_columns(url)
         df["Source Sheet"] = name
         all_dfs.append(df)
-    return pd.concat(all_dfs, ignore_index=True)
+    if all_dfs:
+        return pd.concat(all_dfs, ignore_index=True)
+    else:
+        return pd.DataFrame()
 
 combined_df = load_all_data()
 
@@ -55,9 +58,14 @@ elif quick_filter == "This Week":
     combined_df = combined_df[(combined_df["Date"] >= this_week) & (combined_df["Date"] <= today + timedelta(days=1))]
 
 # Regular filters
-date_options = sorted(combined_df["Date"].dropna().dt.strftime("%Y-%m-%d").unique())
-agency1_options = sorted(combined_df["Agency Name.1"].dropna().unique())
-agency2_options = sorted(combined_df["Agency Name.2"].dropna().unique())
+if len(combined_df) > 0 and "Date" in combined_df.columns:
+    date_options = sorted(combined_df["Date"].dropna().dt.strftime("%Y-%m-%d").unique())
+    agency1_options = sorted(combined_df["Agency Name.1"].dropna().unique())
+    agency2_options = sorted(combined_df["Agency Name.2"].dropna().unique())
+else:
+    date_options = []
+    agency1_options = []
+    agency2_options = []
 
 selected_date = st.sidebar.multiselect("Select Date", date_options, default=date_options)
 selected_agency1 = st.sidebar.multiselect("Agency Name 1", agency1_options, default=agency1_options)
@@ -67,11 +75,14 @@ selected_agency2 = st.sidebar.multiselect("Agency Name 2", agency2_options, defa
 search_text = st.text_input("🔎 Search any keyword (ID, Agency, Date, etc.)")
 
 # Apply filters
-filtered_df = combined_df[
-    combined_df["Date"].dt.strftime("%Y-%m-%d").isin(selected_date) &
-    combined_df["Agency Name.1"].isin(selected_agency1) &
-    combined_df["Agency Name.2"].isin(selected_agency2)
-]
+if len(combined_df) > 0:
+    filtered_df = combined_df[
+        combined_df["Date"].dt.strftime("%Y-%m-%d").isin(selected_date) &
+        combined_df["Agency Name.1"].isin(selected_agency1) &
+        combined_df["Agency Name.2"].isin(selected_agency2)
+    ]
+else:
+    filtered_df = combined_df
 
 # Apply search
 if search_text:
@@ -99,9 +110,8 @@ st.markdown(render_html_table(filtered_df), unsafe_allow_html=True)
 
 # --- Download to Excel ---
 @st.cache_data
-def convert_to_excel(df):
+def convert_to_excel(df: pd.DataFrame) -> bytes:
     import io
-    from openpyxl import Workbook
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name="PK Data")
