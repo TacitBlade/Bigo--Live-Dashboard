@@ -10,9 +10,25 @@ from typing import Dict
 BEANS_TO_DIAMONDS_RATE = 210  # 210 beans = 1 diamond
 DIAMOND_TO_USD_RATE = 0.005   # 1 diamond ≈ $0.005 USD
 
-def beans_to_diamonds(beans: int) -> float:
-    """Convert beans to diamonds."""
-    return beans / BEANS_TO_DIAMONDS_RATE
+def calculate_diamonds(beans: int) -> tuple[int, int]:
+    """Converts beans to diamonds based on a tiered exchange system."""
+    diamonds = 0
+    exchanges = [
+        (10999, 3045),  # beans, diamonds
+        (3999, 1105),
+        (999, 275),
+        (109, 29),
+        (8, 2)
+    ]
+
+    remaining_beans = beans
+
+    for cost_beans, gained_diamonds in exchanges:
+        num_bundles = remaining_beans // cost_beans
+        diamonds += num_bundles * gained_diamonds
+        remaining_beans -= num_bundles * cost_beans
+
+    return diamonds, remaining_beans
 
 def diamonds_to_beans(diamonds: float) -> int:
     """Convert diamonds to beans."""
@@ -24,8 +40,8 @@ def diamonds_to_usd(diamonds: float) -> float:
 
 def calculate_pk_performance(received_beans: int, sent_beans: int) -> Dict[str, float]:
     """Calculate PK performance metrics."""
-    received_diamonds = beans_to_diamonds(received_beans)
-    sent_diamonds = beans_to_diamonds(sent_beans)
+    received_diamonds, _ = calculate_diamonds(received_beans)
+    sent_diamonds, _ = calculate_diamonds(sent_beans)
     net_diamonds = received_diamonds - sent_diamonds
     net_usd = diamonds_to_usd(net_diamonds)
     
@@ -119,8 +135,8 @@ def conversion_calculator_widget():
     
     with tab1:
         beans = st.number_input("Beans", min_value=0, value=2100, step=100, key="beans_input")
-        diamonds = beans_to_diamonds(beans)
-        st.success(f"💎 {beans:,} beans = {diamonds:.2f} diamonds")
+        diamonds, remaining_beans = calculate_diamonds(beans)
+        st.success(f"💎 {beans:,} beans = {diamonds:,} diamonds with {remaining_beans} beans remaining.")
     
     with tab2:
         diamonds = st.number_input("Diamonds", min_value=0.0, value=10.0, step=0.1, key="diamonds_input")
