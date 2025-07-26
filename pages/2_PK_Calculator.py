@@ -14,9 +14,6 @@ def load_rules():
         excel_file = pd.ExcelFile(excel_path)
         sheet_names = excel_file.sheet_names
         
-        # Debug: Show available sheets
-        st.info(f"Available sheets: {sheet_names}")
-        
         # Try common sheet names or use the first available sheet
         sheet_to_use = None
         common_names = ['Sheet1', 'Rules', 'PK Rules', 'Data']
@@ -37,20 +34,15 @@ def load_rules():
             
         rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use)
         
-        # Debug: Show available columns
-        st.info(f"Available columns: {list(rules_df.columns)}")
-        
-        # Debug: Show first few rows
-        st.info("First few rows of data:")
-        st.dataframe(rules_df.head())
-        
-        # Process the diamond requirements from PK Score (divide by 10)
+        # Process the diamond requirements by removing ')' from PK scores
         if 'PK Score' in rules_df.columns:
-            # Convert PK Score to diamond requirement by dividing by 10 (removing a zero)
-            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['PK Score'], errors='coerce') / 10
-        else:
-            st.error("'PK Score' column not found in the Excel file.")
-            return None
+            # Extract diamond requirement by removing ')' from the end of PK Score
+            rules_df['Diamond Requirement'] = rules_df['PK Score'].astype(str).str.rstrip(')')
+            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
+        elif 'Diamond Requirement' in rules_df.columns:
+            # If Diamond Requirement already exists, clean it by removing ')'
+            rules_df['Diamond Requirement'] = rules_df['Diamond Requirement'].astype(str).str.rstrip(')')
+            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
         
         return rules_df
     except FileNotFoundError:
