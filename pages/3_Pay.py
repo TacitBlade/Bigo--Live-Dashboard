@@ -83,7 +83,7 @@ with tab2:
     # Load the pay chart Excel file
     try:
         chart_df = pd.read_excel(
-            '/mnt/data/Alpha_Omega_Agency_Pay_Chart_with_Diamonds.xlsx',
+            'templates/Alpha_Omega_Agency_Pay_Chart_with_Diamonds.xlsx',
             sheet_name='Pay_Chart_with_Diamonds'
         )
         # Drop unwanted columns
@@ -118,4 +118,4 @@ with tab2:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
     except FileNotFoundError:
-        st.error("Pay chart file not found. Please ensure the Excel file is placed at '/mnt/data/Alpha_Omega_Agency_Pay_Chart_with_Diamonds.xlsx'.")
+        st.error("Pay chart file not found. Please ensure 'templates/Alpha_Omega_Agency_Pay_Chart_with_Diamonds.xlsx' is in your project directory.")
