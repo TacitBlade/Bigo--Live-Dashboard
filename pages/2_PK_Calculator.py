@@ -9,7 +9,30 @@ def load_rules():
     try:
         # Correctly construct the path to the Excel file
         excel_path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'RulesAndRewards.xlsx')
-        rules_df = pd.read_excel(excel_path, sheet_name='Sheet1')
+        
+        # Try to read the Excel file and get available sheet names
+        excel_file = pd.ExcelFile(excel_path)
+        sheet_names = excel_file.sheet_names
+        
+        # Try common sheet names or use the first available sheet
+        sheet_to_use = None
+        common_names = ['Sheet1', 'Rules', 'PK Rules', 'Data']
+        
+        for name in common_names:
+            if name in sheet_names:
+                sheet_to_use = name
+                break
+        
+        # If no common name found, use the first sheet
+        if sheet_to_use is None and sheet_names:
+            sheet_to_use = sheet_names[0]
+            st.info(f"Using sheet '{sheet_to_use}' from the Excel file.")
+        
+        if sheet_to_use is None:
+            st.error("No sheets found in the Excel file.")
+            return None
+            
+        rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use)
         
         # Process the diamond requirements by removing ')' from PK scores
         if 'PK Score' in rules_df.columns:
