@@ -1,0 +1,9 @@
+[theme]
+base="light"
+
+[server]
+headless = true
+enableCORS = false
+
+[client]
+showSidebarNavigation = true

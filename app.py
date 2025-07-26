@@ -8,6 +8,15 @@ import time
 st.set_page_config(page_title="Bigo PK Dashboard", layout="wide")
 st.title("📊 Bigo PK Match Data Viewer")
 
+import streamlit as st
+
+st.set_page_config(page_title="Bigo Dashboard", layout="wide")
+st.title("🎥 Welcome to the Bigo Agency Dashboard")
+
+st.markdown("Select a page from the sidebar to begin 👉")
+st.info("Use the sidebar navigation to switch between **PK Viewer**, **Schedule**, and **Pay**.")
+
+
 # --- Auto Refresh ---
 refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=2)
 if refresh_interval > 0:
