@@ -18,10 +18,8 @@ def load_css():
             continue
 
 # ---- Config ----
-st.set_page_config(page_title="Bigo PK Dashboard", layout="wide")
-load_css()  # Load custom styles
-
-st.title("📊 Bigo PK Match Data Viewer")
+st.set_page_config(page_title="Bigo Agency Dashboard", layout="wide")
+st.title("🎥 Welcome to the Bigo Agency Dashboard")
 
 st.markdown("Select a page from the sidebar to begin 👉")
 st.info("Use the sidebar navigation to switch between **PK Viewer**, **Schedule**, and **Pay**.")

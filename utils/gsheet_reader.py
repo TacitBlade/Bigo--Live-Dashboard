@@ -10,11 +10,10 @@ def read_filtered_columns(sheet_url: str) -> pd.DataFrame:
     try:
         df = pd.read_csv(csv_url)
     except Exception as e:
-        print(f"Error loading sheet: {e}")
+        st.error(f"Error loading sheet: {e}")
         return pd.DataFrame()
-
-    columns_to_keep = ["Date", "Time", "Agency Name.1", "ID1", "Agency Name.2", "ID.2"]
-    existing = [col for col in columns_to_keep if col in df.columns]
+    cols = ["Date", "Time", "Agency Name.1", "ID1", "Agency Name.2", "ID.2"]
+    existing = [c for c in cols if c in df.columns]
     return df[existing].dropna(how="all")
 
 def read_multiple_sheets(sheet_dict: dict) -> pd.DataFrame:
