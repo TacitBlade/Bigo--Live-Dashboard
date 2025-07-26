@@ -97,17 +97,8 @@ with tab2:
         existing = [col for col in to_drop if col in chart_df.columns]
         chart_df = chart_df.drop(columns=existing)
 
-        # Filtering controls
-        st.subheader("Filters")
-        filtered_df = chart_df.copy()
-        for col in chart_df.columns:
-            options = ['All'] + sorted(chart_df[col].dropna().unique().tolist())
-            selected = st.selectbox(f"Filter by {col}", options)
-            if selected != 'All':
-                filtered_df = filtered_df[filtered_df[col] == selected]
-
         st.subheader("Pay Chart")
-        st.dataframe(filtered_df, use_container_width=True)
+        st.dataframe(chart_df, use_container_width=True)
 
         # Export button
         @st.cache_data
@@ -117,7 +108,7 @@ with tab2:
                 df.to_excel(writer, index=False, sheet_name='Pay_Chart')
             return buf.getvalue()
 
-        excel_chart = to_excel_chart(filtered_df)
+        excel_chart = to_excel_chart(chart_df)
         st.download_button(
             "📥 Download Pay Chart (Excel)",
             data=excel_chart,
