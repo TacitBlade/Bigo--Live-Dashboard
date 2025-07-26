@@ -15,22 +15,26 @@ PK_TIERS = {
 def diamonds_to_score(diamonds: int) -> int:
     return diamonds * 10
 
-def calculate_rebates(score: int, role: str):
+def calculate_rebates(score: int):
     result = []
     for pk_type, tiers in PK_TIERS.items():
+        tier_found = False
         for threshold, rebate in sorted(tiers, reverse=True):
             if score >= threshold:
                 result.append((pk_type, threshold, rebate))
+                tier_found = True
                 break
-    if not result:
-        result.append(("Fallback Tier", score, "Below eligible rebate tier"))
+        if not tier_found:
+            result.append((pk_type, "Below minimum", "No rebate available"))
+    
     return result
 
 def display_results(breakdown):
     for pk_type, threshold, rebate in breakdown:
-        st.markdown(f"{pk_type}")
+        st.markdown(f"**{pk_type}**")
         st.write(f"• PK Threshold: {threshold}")
-        st.write(f"• Rebate: {rebate}\n")
+        st.write(f"• Rebate: {rebate}")
+        st.write("---")
 
 # ----- Streamlit UI -----
 st.set_page_config(page_title="PK Rebate Calculator", layout="centered")
@@ -38,10 +42,9 @@ st.title("💎 PK Rebate Optimizer")
 st.markdown("Enter your diamonds to get the best PK matchups for max rebates.")
 
 diamonds = st.number_input("Enter diamond amount", min_value=1, step=1)
-role = st.selectbox("Select your role", options=["host", "admin", "auditor"])
 
 if st.button("Calculate"):
     pk_score = diamonds_to_score(diamonds)
     st.markdown(f"### Your PK Score: {pk_score}")
-    breakdown = calculate_rebates(pk_score, role)
+    breakdown = calculate_rebates(pk_score)
     display_results(breakdown)
