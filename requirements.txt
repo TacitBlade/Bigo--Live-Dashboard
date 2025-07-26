@@ -1,5 +1,9 @@
-streamlit
-pandas
-openpyxl
-gspread
-oauth2client
+streamlit>=1.40.0
+pandas>=2.0.0
+openpyxl>=3.1.0
+gspread>=6.0.0
+oauth2client>=4.1.0
+requests>=2.30.0
+python-dateutil>=2.8.0
+plotly>=5.0.0
+xlsxwriter>=3.0.0

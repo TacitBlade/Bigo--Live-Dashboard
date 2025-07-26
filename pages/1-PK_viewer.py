@@ -3,6 +3,7 @@ import pandas as pd
 from utils.gsheet_reader import read_multiple_sheets
 from datetime import datetime, timedelta
 import time
+from io import BytesIO
 
 st.set_page_config(page_title="🏆 PK Viewer", layout="wide")
 st.title("🏆 PK Match Viewer")
@@ -19,8 +20,14 @@ sheet_urls = {
 refresh_interval = st.sidebar.selectbox("🔄 Auto-refresh every...", [0, 1, 2, 5, 10], index=2)
 if refresh_interval > 0:
     st.caption(f"⏱ Refreshing every {refresh_interval} minute(s).")
-    time.sleep(refresh_interval * 60)
-    st.experimental_rerun()
+    # Use session state to track last refresh time
+    if 'last_refresh' not in st.session_state:
+        st.session_state.last_refresh = time.time()
+    
+    current_time = time.time()
+    if current_time - st.session_state.last_refresh > refresh_interval * 60:
+        st.session_state.last_refresh = current_time
+        st.rerun()
 
 @st.cache_data(ttl=300)
 def load_data():

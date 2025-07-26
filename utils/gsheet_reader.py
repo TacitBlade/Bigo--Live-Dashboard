@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 
 def url_to_csv(sheet_url: str) -> str:
     base_url = sheet_url.split('/edit')[0]

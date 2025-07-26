@@ -1,6 +1,180 @@
-# 📊 Bigo Live Dashboard
+# 🎥 Bigo Live Dashboard
 
-A comprehensive dashboard for managing Bigo Live PK matches, schedules, and host payments.
+A comprehensive web-based dashboard for managing Bigo Live PK matches, schedules, and host payments with real-time Google Sheets integration.
+
+## 🚀 Features
+
+### 📈 PK Viewer 
+- **Multi-sheet data integration** from Google Sheets
+- **Real-time filtering** by date, agency, and search terms  
+- **Quick date filters** (Today, This Week, All)
+- **Visual highlighting** for same-agency matches
+- **Excel export** functionality
+- **Auto-refresh** capabilities
+
+### 📅 Schedule Management
+- **Weekly PK schedule** overview
+- **Host and day filtering** options
+- **Color-coded event types** (Talent, Family, Agency, Group)
+- **Performance statistics** and metrics  
+- **Schedule export** to CSV
+
+### 💰 Payment Calculator
+- **Automated payment calculations** based on:
+  - PK wins and performance
+  - Streaming hours
+  - Beans earned
+  - Agency tier multipliers
+  - Win rate bonuses
+- **Interactive payment settings**
+- **Visual payment breakdown** 
+- **Top performer highlighting**
+- **Export functionality**
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+- Python 3.8+ 
+- Virtual environment (recommended)
+
+### 1. Clone & Setup
+```bash
+git clone https://github.com/TacitBlade/Bigo--Live-Dashboard.git
+cd Bigo--Live-Dashboard
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# Windows:
+.venv\Scripts\activate
+# Linux/Mac:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Configure Google Sheets (Optional)
+If using Google Sheets write functionality:
+1. Create a Google Service Account
+2. Download credentials as `google_credentials.json`
+3. Share your Google Sheets with the service account email
+
+### 3. Run the Application
+```bash
+streamlit run app.py
+```
+
+Visit `http://localhost:8501` to access the dashboard.
+
+## 📊 Google Sheets Integration
+
+### Required Sheet Structure
+Your Google Sheets should contain these columns:
+- `Date` - Match date
+- `Time` - Match time  
+- `Agency Name.1` - First agency name
+- `ID1` - First host ID
+- `Agency Name.2` - Second agency name
+- `ID.2` - Second host ID
+
+### Sheet URLs Configuration
+Update sheet URLs in `app.py`:
+```python
+sheet_urls = {
+    "Training PKs": "your_google_sheet_url_1",
+    "Tasks": "your_google_sheet_url_2", 
+    "Mystery Matches": "your_google_sheet_url_3",
+}
+```
+
+## 🏗️ Project Structure
+
+```
+Bigo--Live-Dashboard/
+├── app.py                 # Main application
+├── requirements.txt       # Dependencies
+├── google_credentials.json # Google API credentials (create this)
+├── config/               # Configuration files
+├── pages/               # Streamlit pages
+├── utils/               # Utility functions  
+├── static/              # CSS styling
+├── templates/           # Resources
+└── scripts/            # Deployment scripts
+```
+
+## ✅ Recent Updates & Fixes
+
+### Version 2.0 Updates
+- ✅ **Fixed missing dependencies** - gspread and oauth2client now properly installed
+- ✅ **Updated deprecated APIs** - replaced `st.experimental_rerun()` with `st.rerun()`
+- ✅ **Enhanced error handling** - better Google Sheets connectivity
+- ✅ **Improved requirements.txt** - added version constraints for stability
+- ✅ **Fixed import issues** - resolved missing BytesIO import
+- ✅ **Enhanced test coverage** - comprehensive setup validation
+
+### Infrastructure Improvements
+- Python 3.13.5 virtual environment configured
+- All syntax errors resolved
+- Enhanced code documentation
+- Improved type safety
+
+## 🧪 Testing
+
+Run the built-in test suite:
+```bash
+python test_setup.py
+```
+
+This will verify:
+- All dependencies are installed
+- Required files exist
+- DataFrame operations work correctly
+- Google Sheets integration is functional
+
+## 🎨 Customization
+
+### Styling
+Modify `static/enhanced_style.css` and `static/style.css` for custom branding.
+
+### Payment Logic  
+Update `utils/paysheet.py` to match your agency's payout rules.
+
+### Configuration
+Adjust settings in `config/settings.py` for your environment.
+
+## 📝 Usage Tips
+
+1. **Data Filtering**: Use the sidebar filters to narrow down PK match data
+2. **Quick Navigation**: Use the sidebar to switch between PK Viewer, Schedule, and Pay pages  
+3. **Export Data**: Download filtered results as Excel files
+4. **Auto-Refresh**: Enable auto-refresh for real-time data updates
+5. **Payment Calculations**: Adjust payment parameters in the sidebar for accurate calculations
+
+## 🐛 Troubleshooting
+
+### Common Issues
+- **Google Sheets not loading**: Check sheet URL format and permissions
+- **Import errors**: Ensure all dependencies are installed with `pip install -r requirements.txt`
+- **Slow performance**: Reduce auto-refresh frequency or clear cache
+
+### Support
+For issues or feature requests, please check the project repository or contact the development team.
+
+## 📄 License
+
+This project is for private use within Bigo Live agencies. Commercial distribution requires permission.
+
+## 👨‍💻 Author
+
+**TacitBlade** - Lead Developer  
+- GitHub: [@TacitBlade](https://github.com/TacitBlade)
+- Project: [Bigo Live Dashboard](https://github.com/TacitBlade/Bigo--Live-Dashboard)
+
+---
+
+*Built with ❤️ for the Bigo Live community*
 
 ## 🚀 Features
 
