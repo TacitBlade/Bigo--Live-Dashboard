@@ -32,24 +32,100 @@ def load_rules():
             st.error("No sheets found in the Excel file.")
             return None
             
-        rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use)
+        # Read Excel with header row - try different header positions
+        rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use, header=0)
         
-        # Process the diamond requirements by removing ')' from PK scores
-        if 'PK Score' in rules_df.columns:
-            # Extract diamond requirement by removing ')' from the end of PK Score
-            rules_df['Diamond Requirement'] = rules_df['PK Score'].astype(str).str.rstrip(')')
-            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
-        elif 'Diamond Requirement' in rules_df.columns:
-            # If Diamond Requirement already exists, clean it by removing ')'
-            rules_df['Diamond Requirement'] = rules_df['Diamond Requirement'].astype(str).str.rstrip(')')
-            rules_df['Diamond Requirement'] = pd.to_numeric(rules_df['Diamond Requirement'], errors='coerce')
+        # Debug: Show raw data structure
+        st.write("**Debug - Raw Excel Data:**")
+        st.dataframe(rules_df.head())
         
-        return rules_df
+        # Check if we need to use a different header row
+        if all(col.startswith('Unnamed:') for col in rules_df.columns):
+            # Try reading with header=1 (second row as header)
+            rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use, header=1)
+            st.write("**Debug - Using row 2 as header:**")
+            st.dataframe(rules_df.head())
+            
+            # If still unnamed, try header=2
+            if all(col.startswith('Unnamed:') for col in rules_df.columns):
+                rules_df = pd.read_excel(excel_path, sheet_name=sheet_to_use, header=2)
+                st.write("**Debug - Using row 3 as header:**")
+                st.dataframe(rules_df.head())
+        
+        # If columns are still unnamed, manually assign column names based on your image
+        if all(col.startswith('Unnamed:') for col in rules_df.columns):
+            # Based on your image, the columns should be:
+            # Win, win, PK points, Star Tasks PK, Agency 2 vs 2 PK, Talent PK, Daily PK
+            expected_columns = ['Win', 'win', 'PK points', 'Star Tasks PK', 'Agency 2 vs 2 PK', 'Talent PK', 'Daily PK']
+            
+            # Only assign if we have enough columns
+            if len(rules_df.columns) >= len(expected_columns):
+                rules_df.columns = expected_columns[:len(rules_df.columns)]
+            else:
+                # Generic column names if we don't have enough
+                rules_df.columns = [f'Column_{i+1}' for i in range(len(rules_df.columns))]
+            
+            st.write("**Debug - After assigning column names:**")
+            st.dataframe(rules_df.head())
+        
+        # Now process the data to create PK Type and Diamond Requirement columns
+        pk_data = []
+        
+        # Define PK types from your columns
+        pk_columns = ['Daily PK', 'Talent PK', 'Agency 2 vs 2 PK', 'Star Tasks PK']
+        
+        # Process each row
+        for idx, row in rules_df.iterrows():
+            # Get win amount from 'Win' or 'win' column
+            win_amount = "N/A"
+            if 'Win' in rules_df.columns and pd.notna(row['Win']):
+                win_amount = row['Win']
+            elif 'win' in rules_df.columns and pd.notna(row['win']):
+                win_amount = row['win']
+            
+            # Process each PK type column
+            for pk_type in pk_columns:
+                if pk_type in rules_df.columns and pd.notna(row[pk_type]):
+                    pk_score_raw = str(row[pk_type]).strip()
+                    
+                    # Extract numeric value from PK score (remove ')' or other characters)
+                    try:
+                        pk_score = int(pk_score_raw.rstrip(')').replace(',', ''))
+                        diamond_req = pk_score // 10  # Convert PK score to diamond requirement
+                        
+                        if diamond_req > 0:
+                            pk_data.append({
+                                'PK Type': pk_type,
+                                'PK Score': pk_score,
+                                'Diamond Requirement': diamond_req,
+                                'Win': win_amount
+                            })
+                    except (ValueError, AttributeError):
+                        continue
+        
+        if not pk_data:
+            st.error("No valid PK data could be extracted from the Excel file.")
+            st.write("**Available columns:**", list(rules_df.columns))
+            return None
+        
+        # Convert to DataFrame
+        processed_df = pd.DataFrame(pk_data)
+        
+        # Remove duplicates and sort
+        processed_df = processed_df.drop_duplicates().sort_values('Diamond Requirement', ascending=False)
+        
+        st.success(f"Successfully processed {len(processed_df)} PK types!")
+        st.write("**Final processed data:**")
+        st.dataframe(processed_df)
+        
+        return processed_df
+        
     except FileNotFoundError:
         st.error("Error: 'RulesAndRewards.xlsx' not found. Please make sure the file is in the 'templates' directory.")
         return None
     except Exception as e:
         st.error(f"An error occurred while loading the rules: {e}")
+        st.write("**Error details:**", str(e))
         return None
 
 def calculate_pk_breakdown(diamonds: int, rules_df: pd.DataFrame) -> str:
