@@ -20,11 +20,22 @@ def load_css():
 # ---- Config ----
 st.set_page_config(page_title="Bigo Agency Dashboard", page_icon="🎥", layout="wide")
 
+# Load CSS
+load_css()
+
 # Navigation
 st.sidebar.title("🏠 Navigation")
 page = st.sidebar.selectbox("Choose a page:", ["Home", "PK Viewer", "Schedule", "Pay", "Diamond Calculator"])
 
-if page == "Home":
+# Ensure the selectbox reflects the current page
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "Home"
+
+# Update session state when page changes
+if page != st.session_state.current_page:
+    st.session_state.current_page = page
+
+if st.session_state.current_page == "Home":
     # Landing page content
     st.title("🎥 Welcome to the Bigo Agency Dashboard")
     
@@ -133,18 +144,18 @@ if page == "Home":
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("📊 Go to PK Viewer", use_container_width=True):
-            st.session_state.page = "PK Viewer"
+            st.session_state.current_page = "PK Viewer"
             st.rerun()
     with col2:
         if st.button("📅 View Schedule", use_container_width=True):
-            st.session_state.page = "Schedule"  
+            st.session_state.current_page = "Schedule"  
             st.rerun()
     with col3:
         if st.button("💰 Access Pay Tools", use_container_width=True):
-            st.session_state.page = "Pay"
+            st.session_state.current_page = "Pay"
             st.rerun()
 
-elif page == "PK Viewer":
+elif st.session_state.current_page == "PK Viewer":
     st.title("📊 PK Data Viewer")
     
     # --- Auto Refresh and Cache Management ---
@@ -344,25 +355,25 @@ elif page == "PK Viewer":
 
 else:
     # Placeholder for other pages
-    st.title(f"🚧 {page} Page")
-    st.info(f"The {page} page is under construction. Please check back later!")
-    st.markdown(f"### Coming Soon: {page} Features")
+    st.title(f"🚧 {st.session_state.current_page} Page")
+    st.info(f"The {st.session_state.current_page} page is under construction. Please check back later!")
+    st.markdown(f"### Coming Soon: {st.session_state.current_page} Features")
     
-    if page == "Schedule":
+    if st.session_state.current_page == "Schedule":
         st.markdown("""
         - 📅 Calendar view
         - ⏰ Event scheduling
         - 🔔 Notifications
         - 📊 Schedule analytics
         """)
-    elif page == "Pay":
+    elif st.session_state.current_page == "Pay":
         st.markdown("""
         - 💰 Payment processing
         - 📈 Earnings tracking
         - 💎 Diamond calculations
         - 📊 Financial reports
         """)
-    elif page == "Diamond Calculator":
+    elif st.session_state.current_page == "Diamond Calculator":
         st.markdown("""
         - 💎 Diamond value calculations
         - 💰 Currency conversions
