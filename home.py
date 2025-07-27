@@ -25,7 +25,7 @@ load_css()
 
 # Navigation
 st.sidebar.title("🏠 Navigation")
-page = st.sidebar.selectbox("Choose a page:", ["Home", "PK Viewer", "Schedule", "Pay", "Diamond Calculator"])
+page = st.sidebar.selectbox("Choose a page:", ["Home", "PK Viewer", "Schedule", "Pay", "Diamond Calculator", "Host Pay Calculator"])
 
 # Ensure the selectbox reflects the current page
 if 'current_page' not in st.session_state:
@@ -352,6 +352,162 @@ elif st.session_state.current_page == "PK Viewer":
                 file_name="bigo_pk_data.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
+
+elif st.session_state.current_page == "Host Pay Calculator":
+    st.title("🧮 Host Pay Calculator")
+    
+    st.markdown("""
+    <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 10px; margin: 1rem 0;">
+        <h3 style="color: white; margin: 0;">💰 Calculate Host Earnings</h3>
+        <p style="color: white; margin: 0.5rem 0;">Determine host payments based on performance metrics</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Input section
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📊 Performance Metrics")
+        
+        # Basic inputs
+        diamonds_earned = st.number_input("💎 Diamonds Earned", min_value=0, value=0, step=100)
+        hours_streamed = st.number_input("⏰ Hours Streamed", min_value=0.0, value=0.0, step=0.5)
+        pk_wins = st.number_input("🏆 PK Wins", min_value=0, value=0, step=1)
+        pk_losses = st.number_input("❌ PK Losses", min_value=0, value=0, step=1)
+        
+        # Additional metrics
+        st.subheader("🎯 Bonus Metrics")
+        daily_tasks_completed = st.number_input("✅ Daily Tasks Completed", min_value=0, value=0, step=1)
+        special_events = st.number_input("🎉 Special Events Participated", min_value=0, value=0, step=1)
+        
+    with col2:
+        st.subheader("💰 Pay Structure")
+        
+        # Pay rates
+        base_rate_per_hour = st.number_input("💵 Base Rate per Hour ($)", min_value=0.0, value=5.0, step=0.5)
+        diamond_rate = st.number_input("💎 Rate per 1000 Diamonds ($)", min_value=0.0, value=1.0, step=0.1)
+        pk_win_bonus = st.number_input("🏆 PK Win Bonus ($)", min_value=0.0, value=2.0, step=0.5)
+        task_bonus = st.number_input("✅ Task Completion Bonus ($)", min_value=0.0, value=1.0, step=0.25)
+        event_bonus = st.number_input("🎉 Event Participation Bonus ($)", min_value=0.0, value=5.0, step=1.0)
+        
+        # Deductions
+        st.subheader("📉 Deductions")
+        pk_loss_penalty = st.number_input("❌ PK Loss Penalty ($)", min_value=0.0, value=0.5, step=0.25)
+        other_deductions = st.number_input("🔻 Other Deductions ($)", min_value=0.0, value=0.0, step=0.5)
+    
+    # Calculate earnings
+    if st.button("🧮 Calculate Pay", use_container_width=True):
+        # Base calculations
+        base_pay = hours_streamed * base_rate_per_hour
+        diamond_earnings = (diamonds_earned / 1000) * diamond_rate
+        pk_bonus = pk_wins * pk_win_bonus
+        task_earnings = daily_tasks_completed * task_bonus
+        event_earnings = special_events * event_bonus
+        
+        # Deductions
+        pk_penalties = pk_losses * pk_loss_penalty
+        total_deductions = pk_penalties + other_deductions
+        
+        # Total calculation
+        gross_pay = base_pay + diamond_earnings + pk_bonus + task_earnings + event_earnings
+        net_pay = gross_pay - total_deductions
+        
+        # Display results
+        st.markdown("---")
+        st.subheader("💰 Payment Breakdown")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("### 📊 Earnings")
+            st.metric("Base Pay", f"${base_pay:.2f}")
+            st.metric("Diamond Earnings", f"${diamond_earnings:.2f}")
+            st.metric("PK Win Bonus", f"${pk_bonus:.2f}")
+            st.metric("Task Bonus", f"${task_earnings:.2f}")
+            st.metric("Event Bonus", f"${event_earnings:.2f}")
+            
+        with col2:
+            st.markdown("### 📉 Deductions")
+            st.metric("PK Loss Penalty", f"${pk_penalties:.2f}")
+            st.metric("Other Deductions", f"${other_deductions:.2f}")
+            st.metric("Total Deductions", f"${total_deductions:.2f}")
+            
+        with col3:
+            st.markdown("### 💵 Final Pay")
+            st.metric("Gross Pay", f"${gross_pay:.2f}")
+            st.metric("Net Pay", f"${net_pay:.2f}", delta=f"${net_pay - gross_pay:.2f}")
+            
+            # Performance indicators
+            if pk_wins > 0:
+                win_rate = (pk_wins / (pk_wins + pk_losses)) * 100 if (pk_wins + pk_losses) > 0 else 0
+                st.metric("PK Win Rate", f"{win_rate:.1f}%")
+        
+        # Detailed breakdown table
+        st.markdown("---")
+        st.subheader("📋 Detailed Breakdown")
+        
+        breakdown_data = {
+            "Category": ["Base Pay", "Diamond Earnings", "PK Win Bonus", "Task Bonus", "Event Bonus", "PK Loss Penalty", "Other Deductions"],
+            "Amount ($)": [base_pay, diamond_earnings, pk_bonus, task_earnings, event_earnings, -pk_penalties, -other_deductions],
+            "Details": [
+                f"{hours_streamed} hours × ${base_rate_per_hour}/hour",
+                f"{diamonds_earned:,} diamonds × ${diamond_rate}/1000",
+                f"{pk_wins} wins × ${pk_win_bonus}",
+                f"{daily_tasks_completed} tasks × ${task_bonus}",
+                f"{special_events} events × ${event_bonus}",
+                f"{pk_losses} losses × ${pk_loss_penalty}",
+                f"Manual deduction"
+            ]
+        }
+        
+        breakdown_df = pd.DataFrame(breakdown_data)
+        st.dataframe(breakdown_df, use_container_width=True)
+        
+        # Summary card
+        st.markdown(f"""
+        <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, {'#28a745' if net_pay >= 0 else '#dc3545'} 0%, {'#20c997' if net_pay >= 0 else '#c82333'} 100%); border-radius: 10px; margin: 2rem 0;">
+            <h2 style="color: white; margin: 0;">Final Payment: ${net_pay:.2f}</h2>
+            <p style="color: white; font-size: 1.1rem; margin: 0.5rem 0;">
+                {'✅ Payment Complete' if net_pay >= 0 else '⚠️ Review Required'}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Export option
+        if st.button("📄 Export Calculation Report"):
+            report_data = {
+                "Host Pay Calculation Report": [""],
+                "Date": [pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")],
+                "": [""],
+                "Performance Metrics": [""],
+                "Diamonds Earned": [diamonds_earned],
+                "Hours Streamed": [hours_streamed],
+                "PK Wins": [pk_wins],
+                "PK Losses": [pk_losses],
+                "Tasks Completed": [daily_tasks_completed],
+                "Events Participated": [special_events],
+                " ": [""],
+                "Payment Breakdown": [""],
+                "Base Pay": [f"${base_pay:.2f}"],
+                "Diamond Earnings": [f"${diamond_earnings:.2f}"],
+                "PK Bonus": [f"${pk_bonus:.2f}"],
+                "Task Bonus": [f"${task_earnings:.2f}"],
+                "Event Bonus": [f"${event_earnings:.2f}"],
+                "Total Deductions": [f"${total_deductions:.2f}"],
+                "  ": [""],
+                "Final Payment": [f"${net_pay:.2f}"]
+            }
+            
+            report_df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in report_data.items()]))
+            
+            excel_data = convert_to_excel(report_df)
+            if excel_data:
+                st.download_button(
+                    label="📥 Download Calculation Report",
+                    data=excel_data,
+                    file_name=f"host_pay_calculation_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
 
 else:
     # Placeholder for other pages
