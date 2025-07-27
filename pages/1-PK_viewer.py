@@ -3,12 +3,19 @@ import pandas as pd
 
 # === INPUT: Google Sheet ID & GID ===
 sheet_id = "1DD7I5sMu55wRVwGjPEv43iygq2b8oudfMspGlOY1zck"  # Replace with your actual sheet ID
-gid = "124426109" "Star Task PK"
-gid = "1441823487" "Talent PK"
-gid = "1623495727" "2 vs 2 PK"
-gid = "1135840848" "Agency PK Party"
-gid = "539805742" "Daily PK"
-      # Replace with the correct tab's GID (not the Sign Up Rewards tab)
+
+# Define available sheets with their GIDs
+available_sheets = {
+    "Star Task PK": "124426109",
+    "Talent PK": "1441823487", 
+    "2 vs 2 PK": "1623495727",
+    "Agency PK Party": "1135840848",
+    "Daily PK": "539805742"
+}
+
+# Let user select which sheet to view
+selected_sheet = st.sidebar.selectbox("Select PK Type", list(available_sheets.keys()))
+gid = available_sheets[selected_sheet]
 
 # === BUILD EXPORT LINK ===
 csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
