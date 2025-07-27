@@ -47,7 +47,7 @@ if "PK Time" in df.columns:
 
 # Agency Name Filter
 if "Agency Name" in df.columns:
-    agency_options = ["All"] + list(df["Agency Name"].dropna().unique())
+    agency_options = ["All"] + sorted(list(df["Agency Name"].dropna().unique()))
     selected_agency = st.sidebar.selectbox("Filter by Agency Name", agency_options)
     if selected_agency != "All":
         filtered_df = filtered_df[filtered_df["Agency Name"] == selected_agency]
