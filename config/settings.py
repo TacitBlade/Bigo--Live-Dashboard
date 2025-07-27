@@ -15,7 +15,7 @@ APP_DESCRIPTION = "Analytics and management dashboard for Bigo Live agencies"
 
 # Google Sheets Settings
 GOOGLE_CREDENTIALS_FILE = "google_credentials.json"
-SHEET_REFRESH_INTERVAL = 300  # seconds (5 minutes)
+SHEET_REFRESH_INTERVAL = 60  # seconds (1 minute)
 
 # Default Google Sheets URLs (can be overridden)
 DEFAULT_SHEET_URLS = {
