@@ -88,18 +88,34 @@ def is_production() -> bool:
 
 class AppConfig:
     def __init__(self):
-        self.config_file = 'config/app_config.json'
+        self.config_file = os.path.join('config', 'app_config.json')
+        self.ensure_config_directory()
         self.load_config()
     
+    def ensure_config_directory(self):
+        """Ensure the config directory exists."""
+        config_dir = os.path.dirname(self.config_file)
+        if not os.path.exists(config_dir):
+            try:
+                os.makedirs(config_dir, exist_ok=True)
+            except OSError as e:
+                print(f"Warning: Could not create config directory: {e}")
+    
     def load_config(self):
+        """Load configuration from file or create default."""
         try:
-            with open(self.config_file, 'r') as f:
-                self.config = json.load(f)
-        except FileNotFoundError:
+            if os.path.exists(self.config_file):
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    self.config = json.load(f)
+            else:
+                self.config = self.default_config()
+                self.save_config()
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Warning: Could not load config file, using defaults: {e}")
             self.config = self.default_config()
-            self.save_config()
     
     def default_config(self):
+        """Return default configuration."""
         return {
             'theme': 'light',
             'currency': 'USD',
@@ -111,5 +127,18 @@ class AppConfig:
         }
     
     def save_config(self):
-        with open(self.config_file, 'w') as f:
-            json.dump(self.config, f, indent=2)
+        """Save configuration to file."""
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as f:
+                json.dump(self.config, f, indent=2, ensure_ascii=False)
+        except IOError as e:
+            print(f"Warning: Could not save config file: {e}")
+    
+    def get(self, key: str, default: Any = None) -> Any:
+        """Get a configuration value."""
+        return self.config.get(key, default)
+    
+    def set(self, key: str, value: Any) -> None:
+        """Set a configuration value and save."""
+        self.config[key] = value
+        self.save_config()
