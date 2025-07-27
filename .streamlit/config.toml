@@ -3,7 +3,7 @@ base="dark"
 
 [server]
 headless = true
-enableCORS = true
+enableCORS = false
 enableXsrfProtection = true
 
 [client]

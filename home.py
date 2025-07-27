@@ -170,11 +170,11 @@ elif st.session_state.current_page == "PK Viewer":
             st.success("Cache cleared!")
             st.rerun()
 
-    if refresh_interval > 0:
-        st.caption(f"⏱ Auto-refreshing every {refresh_interval} minute(s).")
-        # Use session state to track last refresh time
-        if 'last_refresh' not in st.session_state:
-            st.session_state.last_refresh = time.time()
+    refresh_interval = st.slider("Auto-refresh interval (seconds)", 30, 300, 60)
+if st.button("Enable Auto-Refresh"):
+    while True:
+        st.rerun()
+        time.sleep(refresh_interval)
         
         current_time = time.time()
         if current_time - st.session_state.last_refresh > refresh_interval * 60:
