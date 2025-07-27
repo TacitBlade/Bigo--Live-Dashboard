@@ -25,11 +25,12 @@ if missing:
 df = df[expected_columns]
 
 # === SIDEBAR FILTER ===
-agency_options = df["Agency Name, ID 1"].dropna().unique()
+# Fix: Use the correct column name from your expected_columns
+agency_options = df["Agency Name"].dropna().unique()
 selected_agency = st.sidebar.selectbox("Filter by Agency Name", agency_options)
 
 # === FILTER DATA ===
-filtered_df = df[df["Agency Name, ID 1"] == selected_agency]
+filtered_df = df[df["Agency Name"] == selected_agency]
 
 # === DISPLAY ===
 st.title("UK Agency & Host Events")
