@@ -217,7 +217,7 @@ def show_admin_panel(data_manager=None):
         margin-bottom: 2rem;
         padding: 1rem;
         background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        color: yellow;
         border-radius: 10px;
     }
     .admin-info {
