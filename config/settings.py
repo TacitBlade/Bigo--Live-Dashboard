@@ -5,6 +5,8 @@ Contains default values and configuration options for the Bigo Live Dashboard.
 
 import os
 from typing import Dict, Any
+import streamlit as st
+import json
 
 # App Settings
 APP_TITLE = "Bigo Live Dashboard"
@@ -83,3 +85,31 @@ def is_development() -> bool:
 def is_production() -> bool:
     """Check if running in production mode."""
     return get_setting("ENVIRONMENT", "development").lower() == "production"
+
+class AppConfig:
+    def __init__(self):
+        self.config_file = 'config/app_config.json'
+        self.load_config()
+    
+    def load_config(self):
+        try:
+            with open(self.config_file, 'r') as f:
+                self.config = json.load(f)
+        except FileNotFoundError:
+            self.config = self.default_config()
+            self.save_config()
+    
+    def default_config(self):
+        return {
+            'theme': 'light',
+            'currency': 'USD',
+            'decimal_places': 2,
+            'auto_refresh': False,
+            'refresh_interval': 300,
+            'export_formats': ['xlsx', 'csv', 'json'],
+            'user_roles': ['Host', 'Agency', 'Admin']
+        }
+    
+    def save_config(self):
+        with open(self.config_file, 'w') as f:
+            json.dump(self.config, f, indent=2)
