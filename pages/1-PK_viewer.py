@@ -16,7 +16,7 @@ except Exception as e:
     st.stop()
 
 # === CLEAN & SELECT REQUIRED COLUMNS ===
-expected_columns = ["Date", "PK Time", "Agency Name ID 1", "Agency Name UID 2"]
+expected_columns = ["Date", "PK Time", "Agency Name", "ID 1", "Agency Name", "ID 2"]
 missing = [col for col in expected_columns if col not in df.columns]
 if missing:
     st.warning(f"Missing expected columns: {missing}")
@@ -25,11 +25,11 @@ if missing:
 df = df[expected_columns]
 
 # === SIDEBAR FILTER ===
-agency_options = df["Agency Name ID 1"].dropna().unique()
+agency_options = df["Agency Name, ID 1"].dropna().unique()
 selected_agency = st.sidebar.selectbox("Filter by Agency Name", agency_options)
 
 # === FILTER DATA ===
-filtered_df = df[df["Agency Name ID 1"] == selected_agency]
+filtered_df = df[df["Agency Name, ID 1"] == selected_agency]
 
 # === DISPLAY ===
 st.title("UK Agency & Host Events")
