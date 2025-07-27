@@ -221,15 +221,17 @@ def show_admin_panel(data_manager=None):
         border-radius: 10px;
     }
     .admin-info {
-        background-color: #ffff00;
-        border: 1px solid #ffd700;
+        background-color: #ff0000;
+        border: 1px solid #cc0000;
         border-radius: 5px;
         padding: 1rem;
         margin-bottom: 2rem;
-        color: #dc143c;
+        color: #000000;
+        font-weight: bold;
     }
     .admin-info strong {
-        color: #b22222;
+        color: #000000;
+        font-weight: bold;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -237,7 +239,7 @@ def show_admin_panel(data_manager=None):
     st.markdown('<div class="main-header"><h1>🔧 Admin Panel</h1></div>', 
                 unsafe_allow_html=True)
     
-    # Add admin info banner with yellow background and red text
+    # Add admin info banner with red background and bold black text
     st.markdown("""
     <div class="admin-info">
         🔐 <strong>Administrator Access</strong><br>
