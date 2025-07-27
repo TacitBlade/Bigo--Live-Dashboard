@@ -3,7 +3,10 @@ import pandas as pd
 
 # === INPUT: Google Sheet ID & GID ===
 sheet_id = "1DD7I5sMu55wRVwGjPEv43iygq2b8oudfMspGlOY1zck"  # Replace with your actual sheet ID
-gid = "1135840848"            # Replace with the correct tab's GID (not the Sign Up Rewards tab)
+gid = "1135840848"
+gid = "1441823487" 
+gid = "1623495727"
+gid = "1135840848"       # Replace with the correct tab's GID (not the Sign Up Rewards tab)
 
 # === BUILD EXPORT LINK ===
 csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
