@@ -18,21 +18,37 @@ df = pd.DataFrame(data)
 # Streamlit app title
 st.title("Agency Pay Chart")
 
-# Display the DataFrame
+# Display the DataFrame with better formatting
 st.dataframe(df, use_container_width=True)
 
 # Function to convert DataFrame to Excel
 def to_excel(df):
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name='final_recalculated_agency_remun')
+        df.to_excel(writer, index=False, sheet_name='Agency_Pay_Chart')
+        
+        # Get the xlsxwriter workbook and worksheet objects
+        workbook = writer.book
+        worksheet = writer.sheets['Agency_Pay_Chart']
+        
+        # Add number formatting for better readability
+        number_format = workbook.add_format({'num_format': '#,##0'})
+        currency_format = workbook.add_format({'num_format': '$#,##0'})
+        
+        # Format columns with appropriate number formatting
+        worksheet.set_column('B:B', 15, number_format)  # Host Target Beans
+        worksheet.set_column('C:C', 15, number_format)  # S Bonus For Agency
+        worksheet.set_column('D:D', 20, currency_format)  # Total Remuneration (USD)
+        worksheet.set_column('E:E', 15, number_format)  # Beans
+        worksheet.set_column('F:F', 15, number_format)  # Diamonds
+        
     return output.getvalue()
 
 # Download button for Excel
 excel_data = to_excel(df)
 st.download_button(
-    label="Export to Excel",
+    label="📊 Export to Excel",
     data=excel_data,
-    file_name="5_Agency_Pay_Chart.xlsx",
+    file_name="Agency_Pay_Chart.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 )
