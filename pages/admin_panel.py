@@ -24,7 +24,7 @@ class AdminAuth:
         """Verify admin credentials - Replace with your actual credentials"""
         # Default admin credentials (change these!)
         ADMIN_USERS = {
-            "admin": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",  # "password"
+            "admin": "Admin",  # "password"
             "markj": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"   # "secret123"
         }
         
