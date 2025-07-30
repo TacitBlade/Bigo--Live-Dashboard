@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["python310", "pip"]
+
+[phases.install]
+cmd = "pip install --upgrade pip && pip install -r requirements.txt"
+
+[phases.build]
+cmd = "echo 'Build complete'"
+
+[variables]
+PYTHONPATH = "/app"
+
+[start]
+cmd = "streamlit run home.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true"
