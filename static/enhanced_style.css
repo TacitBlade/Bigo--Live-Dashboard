@@ -1,187 +1,403 @@
-/* Enhanced Bigo Live Dashboard Styles */
+/* Alpha Agency 752 - BIGO LIVE Dashboard Styles */
+
+/* Root variables for Alpha Agency branding */
+:root {
+    --alpha-orange: #FF6A00;
+    --alpha-orange-light: #FF8533;
+    --alpha-orange-dark: #E55A00;
+    --alpha-purple: #2D1B69;
+    --alpha-purple-dark: #1A0F3D;
+    --alpha-gradient: linear-gradient(135deg, #FF6A00 0%, #FF8533 50%, #FFB366 100%);
+    --alpha-dark-gradient: linear-gradient(135deg, #2D1B69 0%, #1A0F3D 100%);
+    --alpha-card-shadow: 0 8px 32px rgba(255, 106, 0, 0.2);
+    --alpha-text-light: #FFFFFF;
+    --alpha-text-accent: #FFE4CC;
+}
+
+/* Global background styling */
+.stApp {
+    background: var(--alpha-dark-gradient);
+    background-attachment: fixed;
+}
 
 /* Main container styling */
 .main .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
+    background: transparent;
 }
 
-/* Header styling */
+/* Header styling - Alpha Agency branding */
 h1 {
-    color: #1f1f1f;
-    font-weight: 700;
-    border-bottom: 3px solid #ff6b6b;
-    padding-bottom: 0.5rem;
+    color: var(--alpha-text-light);
+    font-weight: 800;
+    text-align: center;
+    font-size: 3rem;
+    background: var(--alpha-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 8px rgba(255, 106, 0, 0.3);
+    border: none;
+    padding: 1rem 0;
     margin-bottom: 2rem;
+    letter-spacing: 2px;
 }
 
-/* Sidebar improvements */
+h2 {
+    color: var(--alpha-text-light);
+    font-weight: 700;
+    background: var(--alpha-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+h3 {
+    color: var(--alpha-text-light);
+    font-weight: 600;
+    margin-top: 1.5rem;
+}
+
+/* Sidebar improvements - Alpha Agency theme */
 .css-1d391kg {
-    background-color: #f8f9fa;
+    background: rgba(45, 27, 105, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 2px solid var(--alpha-orange);
 }
 
 .css-1d391kg .css-1v0mbdj {
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--alpha-card-shadow);
     margin-bottom: 1rem;
     padding: 1rem;
+    border: 1px solid rgba(255, 106, 0, 0.3);
+    backdrop-filter: blur(5px);
 }
 
-/* Button styling */
+.css-1d391kg h1, .css-1d391kg h2, .css-1d391kg h3, .css-1d391kg .element-container {
+    color: var(--alpha-text-light) !important;
+}
+
+/* Alpha Agency Navigation Title */
+.css-1d391kg .css-1v0mbdj h1 {
+    background: var(--alpha-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Button styling - Alpha Agency orange theme */
 .stButton > button {
-    background-color: #ff6b6b;
-    color: white;
+    background: var(--alpha-gradient);
+    color: var(--alpha-text-light);
     border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    box-shadow: var(--alpha-card-shadow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .stButton > button:hover {
-    background-color: #ff5252;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 107, 107, 0.4);
+    background: linear-gradient(135deg, #E55A00 0%, #FF6A00 50%, #FF8533 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(255, 106, 0, 0.4);
 }
 
-/* Metric containers */
+/* Alpha Agency branded metric containers */
 .css-1r6slb0 {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--alpha-gradient);
+    color: var(--alpha-text-light);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--alpha-card-shadow);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
-/* Success/Info/Warning messages */
+/* Feature cards styling */
+.stColumns .element-container {
+    color: var(--alpha-text-light);
+}
+
+/* Dashboard cards with Alpha Agency branding */
+div[style*="padding: 1.5rem"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid var(--alpha-orange) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--alpha-card-shadow);
+    color: var(--alpha-text-light) !important;
+}
+
+/* Welcome banner customization */
+div[style*="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"] {
+    background: var(--alpha-dark-gradient) !important;
+    border: 3px solid var(--alpha-orange) !important;
+    box-shadow: var(--alpha-card-shadow);
+}
+
+/* Success/Info/Warning messages - Alpha Agency theme */
 .stSuccess {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255, 106, 0, 0.2) 0%, rgba(255, 133, 51, 0.2) 100%);
+    border: 2px solid var(--alpha-orange);
+    border-radius: 12px;
     padding: 1rem;
     margin: 1rem 0;
+    color: var(--alpha-text-light);
+    backdrop-filter: blur(5px);
 }
 
 .stInfo {
-    background-color: #d1ecf1;
-    border: 1px solid #bee5eb;
-    border-radius: 8px;
+    background: rgba(45, 27, 105, 0.3);
+    border: 2px solid rgba(255, 106, 0, 0.5);
+    border-radius: 12px;
     padding: 1rem;
     margin: 1rem 0;
+    color: var(--alpha-text-light);
+    backdrop-filter: blur(5px);
 }
 
 .stWarning {
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255, 106, 0, 0.3) 0%, rgba(229, 90, 0, 0.3) 100%);
+    border: 2px solid var(--alpha-orange-dark);
+    border-radius: 12px;
     padding: 1rem;
     margin: 1rem 0;
+    color: var(--alpha-text-light);
+    backdrop-filter: blur(5px);
 }
 
-/* Enhanced table styling */
+/* Enhanced table styling - Alpha Agency theme */
 table {
     border-collapse: collapse;
     width: 100%;
     font-size: 14px;
-    background: white;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--alpha-card-shadow);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 106, 0, 0.3);
 }
 
 th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-weight: 600;
-    padding: 12px 15px;
+    background: var(--alpha-gradient);
+    color: var(--alpha-text-light);
+    font-weight: 700;
+    padding: 15px 20px;
     text-align: left;
     border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
 }
 
 td {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s ease;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 106, 0, 0.2);
+    transition: background-color 0.3s ease;
+    color: var(--alpha-text-light);
+    font-weight: 500;
 }
 
 tr:hover td {
-    background-color: #f8f9fa;
+    background: rgba(255, 106, 0, 0.1);
+    transform: scale(1.02);
 }
 
-/* Agency match highlighting */
+/* Agency match highlighting - Alpha Agency style */
 tr[style*="#ffe5e5"] {
-    background: linear-gradient(90deg, #ffe5e5 0%, #ffebee 100%) !important;
-    border-left: 4px solid #ff6b6b;
+    background: linear-gradient(90deg, rgba(255, 106, 0, 0.3) 0%, rgba(255, 133, 51, 0.2) 100%) !important;
+    border-left: 4px solid var(--alpha-orange);
+    box-shadow: 0 4px 12px rgba(255, 106, 0, 0.3);
 }
 
-/* Filter section styling */
+/* Filter section styling - Alpha Agency theme */
 .css-1inwz65 {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
     margin: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--alpha-card-shadow);
+    border: 2px solid rgba(255, 106, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
-/* Download button styling */
+/* Download button styling - Alpha Agency branding */
 .stDownloadButton > button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--alpha-gradient);
+    color: var(--alpha-text-light);
     border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-weight: 700;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+    box-shadow: var(--alpha-card-shadow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .stDownloadButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(255, 106, 0, 0.4);
+    background: linear-gradient(135deg, #E55A00 0%, #FF6A00 50%, #FF8533 100%);
 }
 
-/* Selectbox styling */
+/* Input styling - Alpha Agency theme */
 .stSelectbox > div > div {
-    border-radius: 8px;
-    border: 1px solid #ddd;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 106, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    color: var(--alpha-text-light);
 }
 
-/* Text input styling */
 .stTextInput > div > div > input {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    padding: 0.5rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 106, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    color: var(--alpha-text-light);
+    padding: 0.75rem;
+    font-weight: 500;
 }
 
-/* Expander styling */
+.stTextInput > div > div > input::placeholder {
+    color: var(--alpha-text-accent);
+}
+
+/* Number input styling */
+.stNumberInput > div > div > input {
+    border-radius: 12px;
+    border: 2px solid rgba(255, 106, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    color: var(--alpha-text-light);
+    padding: 0.75rem;
+    font-weight: 500;
+}
+
+/* Selectbox dropdown styling */
+.stSelectbox [data-baseweb="select"] {
+    background: rgba(45, 27, 105, 0.9);
+    border: 2px solid var(--alpha-orange);
+    border-radius: 12px;
+}
+
+/* Expander styling - Alpha Agency theme */
 .streamlit-expanderHeader {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    font-weight: 600;
+    background: var(--alpha-gradient);
+    border-radius: 12px;
+    font-weight: 700;
+    color: var(--alpha-text-light);
+    padding: 1rem;
+    margin: 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Loading spinner customization */
+/* Loading spinner customization - Alpha Agency */
 .stSpinner {
-    color: #ff6b6b;
+    color: var(--alpha-orange);
 }
 
-/* Custom animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+/* Custom Alpha Agency animations */
+@keyframes alphaGlow {
+    0% { box-shadow: var(--alpha-card-shadow); }
+    50% { box-shadow: 0 12px 48px rgba(255, 106, 0, 0.4); }
+    100% { box-shadow: var(--alpha-card-shadow); }
+}
+
+@keyframes fadeInAlpha {
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .css-1d391kg, .main .block-container {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeInAlpha 0.8s ease-in-out;
 }
 
-/* Mobile responsiveness */
+/* Alpha Agency logo-style text animations */
+@keyframes logoGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+h1 {
+    background-size: 200% 200%;
+    animation: logoGradient 3s ease infinite;
+}
+
+/* Quick stats cards - Alpha Agency style */
+.css-1r6slb0 {
+    animation: alphaGlow 2s ease-in-out infinite;
+}
+
+/* Alpha Agency metric cards */
+div[data-testid="metric-container"] {
+    background: var(--alpha-gradient);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 0.5rem;
+    box-shadow: var(--alpha-card-shadow);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 64px rgba(255, 106, 0, 0.3);
+}
+
+/* Alpha Agency feature boxes */
+.alpha-feature-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--alpha-orange);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--alpha-card-shadow);
+    color: var(--alpha-text-light);
+    transition: all 0.3s ease;
+}
+
+.alpha-feature-box:hover {
+    transform: translateY(-5px);
+    border-color: var(--alpha-orange-light);
+    box-shadow: 0 16px 64px rgba(255, 106, 0, 0.3);
+}
+
+/* Radio button styling - Alpha Agency theme */
+.stRadio > div {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid rgba(255, 106, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+/* Mobile responsiveness - Alpha Agency */
 @media (max-width: 768px) {
     .main .block-container {
         padding-left: 1rem;
         padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
     }
     
     table {
@@ -189,18 +405,75 @@ tr[style*="#ffe5e5"] {
     }
     
     th, td {
-        padding: 8px 10px;
+        padding: 8px 12px;
+    }
+    
+    .stButton > button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
 }
 
-/* Dark mode support */
+/* Dark theme support - Alpha Agency branding */
 @media (prefers-color-scheme: dark) {
     .css-1d391kg {
-        background-color: #2d3748;
+        background: var(--alpha-dark-gradient);
     }
     
     .css-1d391kg .css-1v0mbdj {
-        background: #4a5568;
-        color: white;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--alpha-text-light);
+        border: 1px solid var(--alpha-orange);
     }
+}
+
+/* Alpha Agency 752 branding elements */
+.alpha-brand-text {
+    background: var(--alpha-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.alpha-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--alpha-orange);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--alpha-card-shadow);
+    color: var(--alpha-text-light);
+}
+
+/* Slider styling - Alpha Agency theme */
+.stSlider > div > div > div > div {
+    background: var(--alpha-gradient);
+}
+
+.stSlider > div > div > div {
+    background: rgba(255, 106, 0, 0.3);
+}
+
+/* Text color overrides for Alpha Agency theme */
+.element-container, .stMarkdown, p, span, div {
+    color: var(--alpha-text-light) !important;
+}
+
+/* Ensure selectbox text is visible */
+.stSelectbox label {
+    color: var(--alpha-text-light) !important;
+    font-weight: 600;
+}
+
+/* Chart styling for Alpha Agency theme */
+.stPlotlyChart {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1rem;
+    border: 2px solid rgba(255, 106, 0, 0.3);
+    backdrop-filter: blur(10px);
 }

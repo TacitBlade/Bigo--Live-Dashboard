@@ -18,14 +18,31 @@ def load_css():
             continue
 
 # ---- Config ----
-st.set_page_config(page_title="Bigo Agency Dashboard", page_icon="🎥", layout="wide")
+st.set_page_config(
+    page_title="Alpha Agency 752 - BIGO LIVE Dashboard", 
+    page_icon="🔥", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 # Load CSS
 load_css()
 
 # Navigation
-st.sidebar.title("🏠 Navigation")
-page = st.sidebar.selectbox("Choose a page:", ["Home", "PK Viewer", "Schedule", "Pay", "Diamond Calculator", "Host Pay Calculator"])
+st.sidebar.markdown("""
+<div style="text-align: center; padding: 1rem 0;">
+    <h1 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+               -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+               font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: 2px;">
+        ALPHA<br>AGENCY 752
+    </h1>
+    <p style="color: #FFE4CC; font-size: 0.9rem; margin: 0.5rem 0; font-weight: 600;">
+        🔥 BIGO LIVE DASHBOARD
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+page = st.sidebar.selectbox("🚀 Choose a page:", ["Home", "PK Viewer", "Schedule", "Pay", "Diamond Calculator", "Host Pay Calculator"])
 
 # Ensure the selectbox reflects the current page
 if 'current_page' not in st.session_state:
@@ -36,25 +53,61 @@ if page != st.session_state.current_page:
     st.session_state.current_page = page
 
 if st.session_state.current_page == "Home":
-    # Landing page content
-    st.title("🎥 Welcome to the Bigo Agency Dashboard")
-    
+    # Landing page content with Alpha Agency 752 branding
     st.markdown("""
-    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; margin: 2rem 0;">
-        <h2 style="color: white; margin: 0;">Your Complete Agency Management Solution</h2>
-        <p style="color: white; font-size: 1.2rem; margin: 1rem 0;">Streamline your Bigo Live agency operations with powerful tools and insights</p>
+    <div style="text-align: center; padding: 3rem 1rem;">
+        <h1 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 50%, #FFB366 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 4rem; font-weight: 800; margin: 0; letter-spacing: 3px; 
+                   text-shadow: 0 8px 32px rgba(255, 106, 0, 0.3);">
+            ALPHA<br>AGENCY 752
+        </h1>
+        <h2 style="color: #FFFFFF; font-size: 2.5rem; font-weight: 700; 
+                   margin: 1rem 0; letter-spacing: 2px;">
+            BIGO LIVE
+        </h2>
+        <h3 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 1.8rem; font-weight: 600; margin: 0.5rem 0;">
+            AGENCY DASHBOARD
+        </h3>
     </div>
     """, unsafe_allow_html=True)
     
-    # Feature cards
+    st.markdown("""
+    <div style="text-align: center; padding: 2rem; background: rgba(45, 27, 105, 0.8); 
+                border: 3px solid #FF6A00; border-radius: 20px; margin: 2rem 0; 
+                box-shadow: 0 16px 64px rgba(255, 106, 0, 0.3); backdrop-filter: blur(10px);">
+        <h2 style="color: white; margin: 0; font-size: 1.8rem; font-weight: 700;">
+            🔥 Your Complete Agency Management Solution
+        </h2>
+        <p style="color: #FFE4CC; font-size: 1.2rem; margin: 1rem 0; font-weight: 500;">
+            Streamline your BIGO Live agency operations with powerful tools and insights
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Feature cards with Alpha Agency 752 styling
+    st.markdown("""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+                gap: 2rem; margin: 3rem 0;">
+    """, unsafe_allow_html=True)
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
         st.markdown("""
-        <div style="padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; height: 200px;">
-            <h3>📊 PK Viewer</h3>
-            <p>View and manage PK data from multiple sheets. Filter, search, and export your data with ease.</p>
-            <ul>
+        <div style="padding: 2rem; background: rgba(255, 255, 255, 0.1); 
+                    border: 2px solid #FF6A00; border-radius: 20px; height: 250px; 
+                    backdrop-filter: blur(10px); box-shadow: 0 16px 64px rgba(255, 106, 0, 0.2);
+                    transition: all 0.3s ease;">
+            <h3 style="color: #FF6A00; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
+                📊 HOSTS
+            </h3>
+            <p style="color: #FFFFFF; font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
+                View and manage host data from multiple sheets. Filter, search, and export your data with ease.
+            </p>
+            <ul style="color: #FFE4CC; font-size: 0.9rem; margin: 0; padding-left: 1.2rem;">
                 <li>Real-time data loading</li>
                 <li>Advanced filtering</li>
                 <li>Export to Excel</li>
@@ -64,23 +117,37 @@ if st.session_state.current_page == "Home":
     
     with col2:
         st.markdown("""
-        <div style="padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; height: 200px;">
-            <h3>📅 Schedule</h3>
-            <p>Manage your agency's scheduling needs and keep track of important events and deadlines.</p>
-            <ul>
-                <li>Event management</li>
-                <li>Calendar integration</li>
-                <li>Automated reminders</li>
+        <div style="padding: 2rem; background: rgba(255, 255, 255, 0.1); 
+                    border: 2px solid #FF6A00; border-radius: 20px; height: 250px; 
+                    backdrop-filter: blur(10px); box-shadow: 0 16px 64px rgba(255, 106, 0, 0.2);
+                    transition: all 0.3s ease;">
+            <h3 style="color: #FF6A00; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
+                👥 NEW HOSTS
+            </h3>
+            <p style="color: #FFFFFF; font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
+                Manage your agency's onboarding and track new host performance and integration.
+            </p>
+            <ul style="color: #FFE4CC; font-size: 0.9rem; margin: 0; padding-left: 1.2rem;">
+                <li>Host onboarding</li>
+                <li>Performance tracking</li>
+                <li>Training management</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
-        <div style="padding: 1.5rem; border: 1px solid #ddd; border-radius: 8px; height: 200px;">
-            <h3>💰 Pay & Calculator</h3>
-            <p>Handle payments and calculate earnings with our integrated financial tools.</p>
-            <ul>
+        <div style="padding: 2rem; background: rgba(255, 255, 255, 0.1); 
+                    border: 2px solid #FF6A00; border-radius: 20px; height: 250px; 
+                    backdrop-filter: blur(10px); box-shadow: 0 16px 64px rgba(255, 106, 0, 0.2);
+                    transition: all 0.3s ease;">
+            <h3 style="color: #FF6A00; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
+                💰 INCOME
+            </h3>
+            <p style="color: #FFFFFF; font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
+                Track payments and calculate earnings with our integrated financial tools.
+            </p>
+            <ul style="color: #FFE4CC; font-size: 0.9rem; margin: 0; padding-left: 1.2rem;">
                 <li>Payment tracking</li>
                 <li>Diamond calculations</li>
                 <li>Financial reports</li>
@@ -88,9 +155,40 @@ if st.session_state.current_page == "Home":
         </div>
         """, unsafe_allow_html=True)
     
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Add fourth card for HOURS
+    col4, col5, col6 = st.columns([1, 2, 1])
+    with col5:
+        st.markdown("""
+        <div style="padding: 2rem; background: rgba(255, 255, 255, 0.1); 
+                    border: 2px solid #FF6A00; border-radius: 20px; 
+                    backdrop-filter: blur(10px); box-shadow: 0 16px 64px rgba(255, 106, 0, 0.2);
+                    transition: all 0.3s ease; margin-top: 2rem;">
+            <h3 style="color: #FF6A00; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; text-align: center;">
+                ⏰ HOURS
+            </h3>
+            <p style="color: #FFFFFF; font-size: 1rem; line-height: 1.6; margin-bottom: 1rem; text-align: center;">
+                Monitor streaming hours and schedule management across all hosts.
+            </p>
+            <ul style="color: #FFE4CC; font-size: 0.9rem; margin: 0; padding-left: 1.2rem;">
+                <li>Hour tracking</li>
+                <li>Schedule optimization</li>
+                <li>Performance analytics</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
     # Quick stats section
-    st.markdown("---")
-    st.subheader("📈 Quick Stats")
+    st.markdown("""
+    <div style="text-align: center; margin: 3rem 0;">
+        <h2 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">
+            📈 QUICK STATS
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Load basic stats for the landing page
     try:
@@ -115,13 +213,58 @@ if st.session_state.current_page == "Home":
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("📊 Total Records", f"{total_records:,}")
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                        padding: 1.5rem; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 32px rgba(255, 106, 0, 0.3); margin: 0.5rem;">
+                <h3 style="color: white; font-size: 2rem; margin: 0; font-weight: 800;">
+                    {total_records:,}
+                </h3>
+                <p style="color: #FFE4CC; margin: 0.5rem 0; font-weight: 600;">
+                    📊 Total Records
+                </p>
+            </div>
+            """.format(total_records=total_records), unsafe_allow_html=True)
         with col2:
-            st.metric("📋 Active Sheets", sheets_loaded)
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                        padding: 1.5rem; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 32px rgba(255, 106, 0, 0.3); margin: 0.5rem;">
+                <h3 style="color: white; font-size: 2rem; margin: 0; font-weight: 800;">
+                    {sheets_loaded}
+                </h3>
+                <p style="color: #FFE4CC; margin: 0.5rem 0; font-weight: 600;">
+                    📋 Active Sheets
+                </p>
+            </div>
+            """.format(sheets_loaded=sheets_loaded), unsafe_allow_html=True)
         with col3:
-            st.metric("🔄 Status", "Online" if sheets_loaded > 0 else "Offline")
+            status_text = "🟢 Online" if sheets_loaded > 0 else "🔴 Offline"
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                        padding: 1.5rem; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 32px rgba(255, 106, 0, 0.3); margin: 0.5rem;">
+                <h3 style="color: white; font-size: 1.5rem; margin: 0; font-weight: 800;">
+                    {status}
+                </h3>
+                <p style="color: #FFE4CC; margin: 0.5rem 0; font-weight: 600;">
+                    🔄 Status
+                </p>
+            </div>
+            """.format(status=status_text), unsafe_allow_html=True)
         with col4:
-            st.metric("⏰ Last Updated", "Just now")
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                        padding: 1.5rem; border-radius: 16px; text-align: center; 
+                        box-shadow: 0 8px 32px rgba(255, 106, 0, 0.3); margin: 0.5rem;">
+                <h3 style="color: white; font-size: 1.2rem; margin: 0; font-weight: 800;">
+                    Just now
+                </h3>
+                <p style="color: #FFE4CC; margin: 0.5rem 0; font-weight: 600;">
+                    ⏰ Last Updated
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
             
     except Exception as e:
         st.info("📊 Stats will appear here once data is loaded")
@@ -138,25 +281,43 @@ if st.session_state.current_page == "Home":
     """)
     
     # Quick actions
-    st.markdown("---")
-    st.subheader("⚡ Quick Actions")
+    st.markdown("""
+    <div style="text-align: center; margin: 3rem 0;">
+        <h2 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">
+            ⚡ QUICK ACTIONS
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("📊 Go to PK Viewer", use_container_width=True):
+        if st.button("📊 HOSTS DATA", use_container_width=True, key="hosts_btn"):
             st.session_state.current_page = "PK Viewer"
             st.rerun()
     with col2:
-        if st.button("📅 View Schedule", use_container_width=True):
+        if st.button("� NEW HOSTS", use_container_width=True, key="new_hosts_btn"):
             st.session_state.current_page = "Schedule"  
             st.rerun()
     with col3:
-        if st.button("💰 Access Pay Tools", use_container_width=True):
+        if st.button("💰 INCOME TOOLS", use_container_width=True, key="income_btn"):
             st.session_state.current_page = "Pay"
             st.rerun()
 
 elif st.session_state.current_page == "PK Viewer":
-    st.title("📊 PK Data Viewer")
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: 2px;">
+            📊 HOSTS DATA VIEWER
+        </h1>
+        <p style="color: #FFE4CC; font-size: 1.2rem; margin: 1rem 0;">
+            Alpha Agency 752 - Data Management System
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # --- Auto Refresh and Cache Management ---
     col1, col2 = st.sidebar.columns(2)
@@ -354,12 +515,29 @@ if st.button("Enable Auto-Refresh"):
             )
 
 elif st.session_state.current_page == "Host Pay Calculator":
-    st.title("🧮 Host Pay Calculator")
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="background: linear-gradient(135deg, #FF6A00 0%, #FF8533 100%); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   font-size: 3rem; font-weight: 800; margin: 0; letter-spacing: 2px;">
+            🧮 HOST PAY CALCULATOR
+        </h1>
+        <p style="color: #FFE4CC; font-size: 1.2rem; margin: 1rem 0;">
+            Alpha Agency 752 - Earnings Management System
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 10px; margin: 1rem 0;">
-        <h3 style="color: white; margin: 0;">💰 Calculate Host Earnings</h3>
-        <p style="color: white; margin: 0.5rem 0;">Determine host payments based on performance metrics</p>
+    <div style="text-align: center; padding: 1.5rem; background: rgba(45, 27, 105, 0.8); 
+                border: 3px solid #FF6A00; border-radius: 20px; margin: 1rem 0; 
+                box-shadow: 0 16px 64px rgba(255, 106, 0, 0.3); backdrop-filter: blur(10px);">
+        <h3 style="color: white; margin: 0; font-size: 1.5rem; font-weight: 700;">
+            💰 Calculate Host Earnings
+        </h3>
+        <p style="color: #FFE4CC; margin: 0.5rem 0; font-weight: 500;">
+            Determine host payments based on performance metrics
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
